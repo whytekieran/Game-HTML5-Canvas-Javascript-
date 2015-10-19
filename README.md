@@ -43,4 +43,4 @@ _**MouthMovePacman.js**_ defines the functions used for opening/closing pacmans 
 
 **Each of these files has been heavily commented to assist in the readibilty and help quicken anyones understanding in exactly whats happening.**
 
-Enjoy :D
+_Enjoy :D_
