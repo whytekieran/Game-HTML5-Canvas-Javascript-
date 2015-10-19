@@ -26,3 +26,30 @@ This game is composed of seven files. Two HTML files, four Javascript files and 
 * BouncingBall.js
 * BorderCollisionsPacman.js
 * MoveMouthPacman.js
+
+_**Home.html**_ is the homepage allowing you to enter or exit. It contains a header, canvas and table with one row and two columns holding
+ the buttons. Home.html also uses Game.css, BouncingBall.js and Dot.js as external files. These are explained further down.
+
+-Game.css is simple providing CSS styling for Home.html, background, borders, button styling etc
+
+-Main.html is the main page and its where the game is played. It uses all .js files as external files. The HTML is simple, only
+ including a canvas. The main running javascript program you could say. Runs here. To run the game we use AnimationFrames, the 
+ onKeyUp event (called in html body tag) and cancelAnimationFrames along with good old fashioned logic :P Main.html also contains 
+ a few functions for controlling chasing ball speed and outputting score and lives to the canvas. (Defined near the top along with 
+ the variables) 
+
+-Dot.js is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using
+ the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
+
+-BouncingBall.js is a javascript class created to handle the bouncing ball for the game. The game pacman chases.
+
+-BorderCollisionsPacman.js defines the functions needed for detecting if pacman has reached the end of the canvas depending on his
+ current direction.
+
+-MouthMovePacman.js defines the functions used for opening/closing pacmans mouth, when it does it and from what angle depending on 
+ the direction he is going in.
+
+ Each of these files has been heavily commented to assist in the readibilty and help quicken anyones understanding in exactly whats 
+ happening.
+
+ Enjoy :D
