@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+    <meta charset="UTF-8">
+    <title>Game Home</title>
+    <!--CSS Styling for this page is done in Game.css-->
+    <link rel="stylesheet" href="Game.css">
+  </head>
+  <body>
+      <!--Homepage Header inside div with header id-->
+      <div id="header">
+          <h1>Chase The Dot.</h1>
+      </div>
+      
+      <!--Canvas for the animation-->
+      <canvas id="canvas" ></canvas>
+    
+      <!--Table with a row and two columns to hold the play and exit buttons-->
+      <table width="100%" border="5" align="center">
+	<tr> 
+        <!--The buttons/hyperlinks one to game(play) the other to google(exit)-->
+		<td><center><a href="Index.html" class="button"><b>Play</b></a></center></td>
+		<td><center><a href="https://www.google.com" class="button"><b>Exit</b></a></center></td>
+	</tr>
+	</table>
+      
+      <!--External Javascript files and internal file-->
+      <script type="text/javascript" src="Dot.js"></script>
+      <script type="text/javascript" src="BouncingBall.js"></script>
+      <script type="text/javascript">
+          <!--Get handle on the canvas / variables-->
+          var canvas = document.getElementById("canvas"); 
+          canvas.width = 1348;                                                                       
+          canvas.height = 400;
+          var ctx = canvas.getContext("2d");
+          var dotRadius = 10;
+          var dotX = 200;
+          var dotY = 100;
+          var ballX = 400;
+          var ballY = 300;
+          var ballRadius = 25;     
+          var move = 3;
+          var ballSpeedX = 6;                                                                            
+          var ballSpeedY = 6;
+          <!--Objects created from classes defined in external files-->
+          var dot = new Dot(dotX, dotY, dotRadius, ctx, "red");
+          var bounceBall = new BouncingBall(0, 0, ballRadius, ctx, "blue");
+        
+          //Function to be ran with animation frame, two balls simple bounce around
+          function chase() 
+          {
+              //Redrawing the background
+            ctx.fillStyle = "black";  
+            ctx.fillRect(0, 0, canvas.width, canvas.height);  
+        
+            //move and draw dot
+            dot.moveDot(dotX, dotY);
+            dot.drawDot(); //red dot 
+            
+            //move and draw bouncing ball
+            bounceBall.moveBall(ballX, ballY);
+            bounceBall.drawBall();
+            
+            //increment dot from left to right and vice versa (collision detection)
+            dotX += move;
+            if(dotX >= (canvas.width - dotRadius) || dotX <= (0 + dotRadius))//if collison equals right side then -var otherwise +var
+            { 
+                move = -move;
+            }
+              
+              //collision detection for the bouncing ball for all four sides of the canavs
+             if((ballX - ballRadius) <= 0 || (ballX + ballRadius) >= canvas.width)
+             {
+	             ballSpeedX = -ballSpeedX;
+             }
+	         if((ballY - ballRadius) <= 0 || (ballY + ballRadius) >= canvas.height)
+             {
+		         ballSpeedY = -ballSpeedY;
+	         }
+            
+            //change balls position
+            ballX += ballSpeedX;       
+            ballY += ballSpeedY 
+          
+            window.requestAnimationFrame(chase);//creates animation frame
+          }
+      
+         chase();//call the function
+      </script>
+  </body>
+</html>

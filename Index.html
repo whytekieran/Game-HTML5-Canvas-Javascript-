@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <!--CSS Styling-->
+    <style type="text/css">
+      body{
+                background-color: black;
+          }
+    </style>
+  </head>
+    <!--Button tag with an onjeyup event for controlling your character-->
+  <body onkeyup="whichButton(event)">
+    <!--Creating a canvas-->   
+    <canvas id="canvasOne" style="border: solid 5px red; width:100%; height:100%;"></canvas>
+
+    <!--External Javascript Files-->
+    <script type="text/javascript" src="BorderCollisionsPacman.js"></script><!--Handles border collisons for pacman-->
+    <script type="text/javascript" src="Dot.js"></script>
+    <script type="text/javascript" src="MouthMovePacman.js"></script>
+    <script type="text/javascript" src="BouncingBall.js"></script>
+    <!--Main Javascript files-->
+    <script type="text/javascript">
+        //Global Variables
+        //Canvas variables
+        var canvas = document.getElementById("canvasOne"); 
+        canvas.width = 1340;                                            //Setting width and height                            
+        canvas.height = 620;
+        var ctx = canvas.getContext("2d");  
+        ctx.fillStyle = "black";                                        //Creating a black background                         
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        var leftRight = 670;                                            //X co-ordinate for pacman character
+        var upAndDownbody = 310;                                        //Y co-ordinate for pacman character
+        var changeMouth = 0;                                            //counter for when pacmans mouth should open/close
+        var radius = 50;  //50                                              //pacmans radius
+        var dotRadius = 10;//10                                             //dot pacman chases radius
+        var ballRadius = 25; //25                                           //circle pacman avoids radius
+        var openCloseMouth1 = 0.25;                                     //angles for pacmans mouth when going right
+        var openCloseMouth2 = 1.75;
+        var openCloseMouth3 = 1.25;                                     //angles for pacmans mouth when going left
+        var openCloseMouth4 = 0.75;
+        var openCloseMouth5 = 1.75;                                     //angles for pacmans mouth when going up
+        var openCloseMouth6 = 1.25;
+        var openCloseMouth7 = 0.25;                                     //angles for pacmans mouth when going down
+        var openCloseMouth8 = 0.75;
+        var mouthPositions = [];                                        //array to take the two return values of change mouth functions
+        var speeds = [];
+        var stopRight;                                                  //variables used to clear intervals
+        var stopLeft;
+        var stopUp;
+        var stopDown;
+        var xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;   //Random x/y for dot pacman chases  
+        var yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+        var ballSpeedX = 0.5  //speed of ball chasing pacman
+        var ballSpeedY = 0.5;
+        var ballIncreaseSpeedX = 0.5;
+        var ballIncreaseSpeedY = 0.5;
+        var ballMaxSpeed = 30;
+        var scoreCnt = 0;//counter for the score
+        var scoreIncrease = 1; //increase score
+        var lives = 3;
+        var caught = false;
+        var gotLife = false;
+        var lifeDotLocationSet = false;
+        var lifeDotX = 0;
+        var lifeDotY = 0;
+        
+        //Output Score and lives
+        function outputUserInfo(ctx, score, lives)
+        {
+            ctx.fillStyle = "blue";
+            ctx.font = "bold 28px Arial";
+            ctx.fillText("SCORE: "+score, 1125, 50);
+            ctx.fillStyle = "blue";
+            ctx.font = "bold 28px Arial";
+            ctx.fillText("LIVES: "+lives, 1143, 80);
+        }
+        
+        //Function to increase speed of the ball chasing pacman
+        function increaseBallSpeed(speedX, speedY)
+        {
+            if(speedX > 0)
+            {
+                speedX += ballIncreaseSpeedX;
+            }
+            else if(speedX  < 0)
+            {
+                speedX -= ballIncreaseSpeedX;
+            }
+                   
+            if(speedY > 0)
+            {
+                speedY += ballIncreaseSpeedY;
+            }
+            else if(speedY < 0)
+            {
+                speedY -= ballIncreaseSpeedY;
+            }
+            
+            return [speedX, speedY];
+        }
+        
+        //call outputUserInfor() to output score and lives
+        outputUserInfo(ctx, scoreCnt, lives);
+        
+        //Random x and y at startup for ball chasing pacman keep doing till correct (do/while)
+        do
+        {
+             var xRandomBall = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;    
+             var yRandomBall = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
+        }
+        while((xRandomBall <= ballRadius) || (xRandomBall >= 1315) || (yRandomBall <= ballRadius) || (yRandomBall >= 595));
+         
+        //Create and draw the dot object that pacman will chase, class define in Dot.js
+        var dot = new Dot(xRandomDot, yRandomDot, dotRadius, ctx, "red");
+        var dotExtraLife = new Dot(0, 0, 10, ctx, "yellow");
+        dot.drawDot();                                                     //Calling drawDot class function 
+        var bounceBall = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball object to catch pacman class defined in BouncingBall.js
+   
+        //Depending on which directional button is pressed call a directional function on pacman
+        //turn off all other intervals and run only the direction specified.
+        function whichButton(event) 
+        {
+            //Gets the key code
+            var choice = event.keyCode;
+             
+            if(choice == 39)//Right
+            { 
+                //Clear up running animation frames and call the go right function
+                window.cancelAnimationFrame(stopUp);            //To cancel an animation frame we call cancelAnimationFrame and
+                window.cancelAnimationFrame(stopLeft);          //pass the id returned when the animation frame was created
+                window.cancelAnimationFrame(stopDown);
+                window.cancelAnimationFrame(stopRight);
+                pacmanGoRight();
+            }
+            else if(choice == 37)//Left
+            {
+                //Clear up running animation frames and call the go left function
+                window.cancelAnimationFrame(stopUp);
+                window.cancelAnimationFrame(stopLeft);
+                window.cancelAnimationFrame(stopDown);
+                window.cancelAnimationFrame(stopRight);
+                pacmanGoLeft();
+            }
+            else if(choice == 38)//Up
+            {
+                //Clear up running animation frames and call the go up function
+                window.cancelAnimationFrame(stopUp);
+                window.cancelAnimationFrame(stopLeft);
+                window.cancelAnimationFrame(stopDown);
+                window.cancelAnimationFrame(stopRight);
+                pacmanGoUp();
+            }
+            else if(choice == 40)//Down
+            {
+                //Clear up running animation frames and call the go down function
+                window.cancelAnimationFrame(stopUp);
+                window.cancelAnimationFrame(stopLeft);
+                window.cancelAnimationFrame(stopDown);
+                window.cancelAnimationFrame(stopRight);
+                pacmanGoDown();
+            }
+        }
+        
+        //Make pacman go right
+        function pacmanGoRight()
+        {
+                //Redraw canvas background 
+                ctx.fillStyle = "black";  
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                //output the score and lives of user
+                outputUserInfo(ctx, scoreCnt, lives);
+            
+                dot.drawDot();//Draw random dot
+                
+                //Move x/y of bouncing ball and then draw it
+                bounceBall.moveBall(xRandomBall, yRandomBall);
+                bounceBall.drawBall();
+            
+                //If we are allowed an extra life we set and draw the extra life dot dot/check for collisions on it
+                if(gotLife == true)
+                {
+                    //move and draw the extra life dot, only draws if we are entitled to a life
+                    //Set a new x/y co-ordinate for it and move it. (only if the location has not already been set)
+                    if(lifeDotLocationSet == false)
+                    {
+                        //give dot a random position
+                        lifeDotX = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                        lifeDotY = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                        dotExtraLife.moveDot(lifeDotX, lifeDotY)    //move the dot
+                        lifeDotLocationSet = true;                  //its position has been set
+                    }
+                    dotExtraLife.drawDot();//draw the dot
+                    
+                    //If they(extra life dot / pacman) intersect give an extra life 
+                    if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
+                    {
+                        if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
+                        {
+                            lives += 1;
+                            gotLife = false;            //make permission for another life false
+                            lifeDotLocationSet = false; //show the location of the dot has not been set
+                        }                
+                    }
+                }
+                
+                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.
+                if(changeMouth == 7)
+                {
+                    changeMouth = 0;
+                }
+                
+               //change mouth functions are defined in MouthMovePacman.js you can see changeMouth is passed as a parameter
+               mouthPositions = changeMouthRight(changeMouth, openCloseMouth1, openCloseMouth2);
+               openCloseMouth1 = mouthPositions[0];
+               openCloseMouth2 = mouthPositions[1];  
+               
+               //Pacman only goes right while X is less than border X, function defined in BorderCollisionsPacman.js
+               leftRight = rightBorderCollision(leftRight, upAndDownbody, radius, canvas.width, openCloseMouth1, openCloseMouth2, ctx);
+                
+               //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
+               if(dot.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
+                   xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                   yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                   dot.moveDot(xRandomDot, yRandomDot);
+                   
+                   //Check if ball speed has hit its maximum and if so
+                   if(ballSpeedX >= ballMaxSpeed || ballSpeedX <= -ballMaxSpeed || ballSpeedY >= ballMaxSpeed || ballSpeedY <= -ballMaxSpeed)
+                   {
+                       //dont do anything, speed remains unchanged
+                       ballSpeedX = ballSpeedX;
+                       ballSpeedY = ballSpeedY;
+                   }
+                   else
+                   {
+                       //Otherwise increase the speed of the ball
+                       speeds = increaseBallSpeed(ballSpeedX, ballSpeedY);//defined above
+                       ballSpeedX = speeds[0];
+                       ballSpeedY = speeds[1];
+                   }
+                   
+                   scoreCnt += scoreIncrease; //Increment the score by amount of score increase
+                   scoreIncrease += 2; //increase score increase
+                   
+                   //If we have gotten 5 dots in a row
+                   if((scoreCnt % 5 == 0) && (scoreCnt != 0))
+                   {
+                       gotLife = true;//we are allowed an extra life
+                   }
+                   
+               }
+            
+               //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+               if((xRandomBall - ballRadius) <= 0 || (xRandomBall + ballRadius) >= canvas.width)
+               {
+	               ballSpeedX = -ballSpeedX;
+               }
+	           if((yRandomBall - ballRadius) <= 0 || (yRandomBall + ballRadius) >= canvas.height)
+               {
+		           ballSpeedY = -ballSpeedY;
+	           }
+               
+               //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
+               if(bounceBall.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught == false)
+                   {
+                        alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
+                        location.reload();                                      //reload the page(GAME OVER)
+                   }
+                   else if(caught == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }                                    
+               }
+               else
+               { 
+                   caught = false;
+               }
+                
+               xRandomBall += ballSpeedX;       //increment bouncing balls x/y and changemouth counter
+               yRandomBall += ballSpeedY 
+               changeMouth += 1;
+            
+            //request animation frame for this function and pass the animation id to var stopRight
+            stopRight = window.requestAnimationFrame(pacmanGoRight);
+        }
+        
+        //Make pacman go left
+        function pacmanGoLeft()
+        {
+                //Redraw background 
+                ctx.fillStyle = "black";  
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+                //output the score and lives of user
+                outputUserInfo(ctx, scoreCnt, lives);
+            
+                dot.drawDot();//Draw random dot
+                 
+                //Move x/y of bouncing ball and then draw it
+                bounceBall.moveBall(xRandomBall, yRandomBall);
+                bounceBall.drawBall();
+   
+                //If we are allowed an extra life we set and draw the extra life dot dot/check for collisions on it
+                if(gotLife == true)
+                {
+                    //move and draw the extra life dot, only draws if we are entitled to a life
+                    //Set a new x/y co-ordinate for it and move it.
+                    //If we are allowed an extra life we set and draw the extra life dot dot/check for collisions on it
+                    if(lifeDotLocationSet == false)
+                    {
+                        lifeDotX = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                        lifeDotY = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                        dotExtraLife.moveDot(lifeDotX, lifeDotY)
+                        lifeDotLocationSet = true;
+                    }
+                    dotExtraLife.drawDot();
+                    
+                    //If they intersect give an extra life 
+                    if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
+                    {
+                        if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
+                        {
+                            lives += 1;
+                            gotLife = false;                //make permission for another life false
+                            lifeDotLocationSet = false;     //show the location has not been set
+                        }                
+                    }
+                }
+            
+                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.
+                if(changeMouth == 7)
+                {
+                    changeMouth = 0;
+                }
+                
+                //change mouth functions are defined in MouthMovePacman.js
+                mouthPositions = changeMouthLeft(changeMouth, openCloseMouth3, openCloseMouth4);
+                openCloseMouth3 = mouthPositions[0];
+                openCloseMouth4 = mouthPositions[1];  
+                
+                //Pacman only goes left while X is greater than border X, function defined in BorderCollisionsPacman.js 
+                leftRight = leftBorderCollision(leftRight, upAndDownbody, radius, canvas.width, openCloseMouth3, openCloseMouth4, ctx);
+                
+                //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
+                if(dot.intersect(leftRight, upAndDownbody, radius))
+                {
+                   //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
+                   xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                   yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                   dot.moveDot(xRandomDot, yRandomDot);
+                   
+                   //Check if ball speed has hit its maximum and if so    
+                   if(ballSpeedX == ballMaxSpeed || ballSpeedX == -ballMaxSpeed || ballSpeedY == ballMaxSpeed || ballSpeedY == -ballMaxSpeed)
+                   {
+                       //dont do anything, speed remains unchanged
+                       ballSpeedX = ballSpeedX;
+                       ballSpeedY = ballSpeedY;
+                   }
+                   else
+                   {
+                       //Otherwise increase the speed of the ball
+                       speeds = increaseBallSpeed(ballSpeedX, ballSpeedY);
+                       ballSpeedX = speeds[0];
+                       ballSpeedY = speeds[1];
+                   }
+            
+                   scoreCnt += scoreIncrease; //Increment the score by amount of score increase
+                   scoreIncrease += 2; //increase score increase
+                    
+                   //If we have gotten 5 dots in a row    
+                   if((scoreCnt % 5 == 0) && (scoreCnt != 0))
+                   {
+                       gotLife = true;//we are allowed an extra life
+                   }
+                }
+                
+                //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+                if((xRandomBall - ballRadius) <= 0 || (xRandomBall + ballRadius) >= canvas.width)
+                {
+	               ballSpeedX = -ballSpeedX;
+                }
+	            if((yRandomBall - ballRadius) <= 0 || (yRandomBall + ballRadius) >= canvas.height)
+                {
+		           ballSpeedY = -ballSpeedY;
+	            }
+                
+                //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
+                //this function will keep calling while they are intersected.
+                if(bounceBall.intersect(leftRight, upAndDownbody, radius))
+                {
+                    if(lives == 0 && caught == false)
+                    {
+                        alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
+                        location.reload();                                      //reload the page
+                    }
+                    else if(caught == false)//else if he is caught but still has lifes
+                    {
+                        lives -= 1;    //take away life
+                        caught = true; //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                    }          
+                }
+                else //only when pacman/ball have both seperated that caught is set back to false
+                {
+                   caught = false;
+                }
+            
+                xRandomBall += ballSpeedX;        //increment bouncing balls x/y and changemouth counter
+                yRandomBall += ballSpeedY; 
+                changeMouth += 1;
+            
+            //request animation frame for this function and pass the animation id to var stopLeft
+            stopLeft = window.requestAnimationFrame(pacmanGoLeft);
+        }
+        
+        //Make pacman go up
+       function pacmanGoUp()
+       {
+                //Redraw background 
+                ctx.fillStyle = "black";  
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+           
+                outputUserInfo(ctx, scoreCnt, lives);
+           
+                dot.drawDot();//Draw random dot
+                
+                //Move x/y of bouncing ball and then draw it
+                bounceBall.moveBall(xRandomBall, yRandomBall);
+                bounceBall.drawBall();
+           
+                //If we are allowed an extra life
+                if(gotLife == true)
+                {
+                    //move and draw the extra life dot, only draws if we are entitled to a life
+                    //Set a new x/y co-ordinate for it and move it. (only if the location has not already been set)
+                    if(lifeDotLocationSet == false)
+                    {
+                        //create random x,y position
+                        lifeDotX = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                        lifeDotY = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                        dotExtraLife.moveDot(lifeDotX, lifeDotY)//move the dot function
+                        lifeDotLocationSet = true;
+                    }
+                    dotExtraLife.drawDot();
+                    
+                    //If they intersect give an extra life 
+                    if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
+                    {
+                        if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
+                        {
+                            lives += 1;
+                            gotLife = false;
+                            lifeDotLocationSet = false;
+                        }                
+                    }
+                }
+                
+                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.
+                if(changeMouth == 7)
+                {
+                    changeMouth = 0;
+                }
+                
+                //change mouth functions are defined in MouthMovePacman.js
+                mouthPositions = changeMouthUp(changeMouth, openCloseMouth5, openCloseMouth6);
+                openCloseMouth5 = mouthPositions[0];
+                openCloseMouth6 = mouthPositions[1];  
+               
+                //Pacman only goes up while Y is greater than border Y, function defined in BorderCollisionsPacman.js
+                upAndDownbody = upBorderCollision(leftRight, upAndDownbody, radius, canvas.height, openCloseMouth5, openCloseMouth6, ctx);
+                
+                //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
+                if(dot.intersect(leftRight, upAndDownbody, radius))
+                {
+                   //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
+                   xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                   yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                   dot.moveDot(xRandomDot, yRandomDot);
+                
+                   //Check if ball speed has hit its maximum and if so    
+                   if(ballSpeedX == ballMaxSpeed || ballSpeedX == -ballMaxSpeed || ballSpeedY == ballMaxSpeed || ballSpeedY == -ballMaxSpeed)
+                   {
+                       //dont do anything, speed remains unchanged
+                       ballSpeedX = ballSpeedX;
+                       ballSpeedY = ballSpeedY;
+                   }
+                   else
+                   {
+                       //Otherwise increase the speed of the ball
+                       speeds = increaseBallSpeed(ballSpeedX, ballSpeedY);
+                       ballSpeedX = speeds[0];
+                       ballSpeedY = speeds[1];
+                   }
+                    
+                   scoreCnt += scoreIncrease; //Increment the score by amount of score increase
+                   scoreIncrease += 2; //increase score increase
+                
+                   //if we got 5 straight dots we are allowed an extra life
+                   if((scoreCnt % 5 == 0) && (scoreCnt != 0))
+                   {
+                       gotLife = true;
+                   }
+                    
+                }
+                
+                //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+                if((xRandomBall - ballRadius) <= 0 || (xRandomBall + ballRadius) >= canvas.width)
+                {
+	               ballSpeedX = -ballSpeedX;
+                }
+	            if((yRandomBall - ballRadius) <= 0 || (yRandomBall + ballRadius) >= canvas.height)
+                {
+		           ballSpeedY = -ballSpeedY;
+	            }
+                
+                //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
+                if(bounceBall.intersect(leftRight, upAndDownbody, radius))
+                {
+                    if(lives == 0 && caught == false)
+                    {
+                        alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
+                        location.reload();                                      //reload the page
+                    }
+                    else if(caught == false)
+                    {
+                        lives -= 1;       //take life away
+                        caught = true;    //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                    }   
+                }
+                else//only when pacman/ball have both seperated that caught is set back to false
+                { 
+                    caught = false;
+                }
+            
+                xRandomBall += ballSpeedX;            //increment bouncing balls x/y and changemouth counter
+                yRandomBall += ballSpeedY;
+                changeMouth += 1;
+           
+           //request animation frame for this function and pass the animation id to var stopUp
+           stopUp = window.requestAnimationFrame(pacmanGoUp);
+       }
+    
+    //Make pacman go down
+    function pacmanGoDown()
+    {
+            //redraw background
+            ctx.fillStyle = "black";  
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+            //Output score and lives
+            outputUserInfo(ctx, scoreCnt, lives);
+        
+            dot.drawDot();//Draw random dot
+            
+            //Move x/y of bouncing ball and then draw it
+            bounceBall.moveBall(xRandomBall, yRandomBall);
+            bounceBall.drawBall();
+        
+            //If we are allowed an extra life
+            if(gotLife == true)
+            {
+                //move and draw the extra life dot, only draws if we are entitled to a life
+                //Set a new x/y co-ordinate for it and move it.
+                if(lifeDotLocationSet == false)
+                {
+                    lifeDotX = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                    lifeDotY = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                    dotExtraLife.moveDot(lifeDotX, lifeDotY)
+                    lifeDotLocationSet = true;
+                }
+                dotExtraLife.drawDot();
+                    
+                //If they intersect give an extra life 
+                if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
+                {
+                    if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
+                    {
+                        lives += 1;
+                        gotLife = false;
+                        lifeDotLocationSet = false;
+                    }                
+                }
+            }
+    
+            //Everytime function is ran 7times we set to zero. every 6times we change pacmans mouth.
+            if(changeMouth == 7)
+            {
+                changeMouth = 0;
+            }
+        
+            //change mouth functions are defined in MouthMovePacman.js
+            mouthPositions = changeMouthDown(changeMouth, openCloseMouth7, openCloseMouth8);
+            openCloseMouth7 = mouthPositions[0];
+            openCloseMouth8 = mouthPositions[1]; 
+            
+            //Pacman only goes down while Y is less than border Y, function defined in BorderCollisionsPacman.js
+            upAndDownbody = downBorderCollision(leftRight, upAndDownbody, radius, canvas.height, openCloseMouth7, openCloseMouth8, ctx); 
+            
+            //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
+            if(dot.intersect(leftRight, upAndDownbody, radius))
+            {
+                //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
+                xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
+                yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
+                dot.moveDot(xRandomDot, yRandomDot);
+                
+                //Check if ball speed has hit its maximum and if so
+                if(ballSpeedX == ballMaxSpeed || ballSpeedX == -ballMaxSpeed || ballSpeedY == ballMaxSpeed || ballSpeedY == -ballMaxSpeed)
+                {
+                    //dont do anything, speed remains unchanged
+                    ballSpeedX = ballSpeedX;
+                    ballSpeedY = ballSpeedY;
+                }
+                else
+                {
+                    //Otherwise increase the speed of the ball
+                    speeds = increaseBallSpeed(ballSpeedX, ballSpeedY);
+                    ballSpeedX = speeds[0];
+                    ballSpeedY = speeds[1];
+                }
+            
+                scoreCnt += scoreIncrease; //Increment the score by amount of score increase
+                scoreIncrease += 2; //increase score increase
+                
+                //if we have gotten 5 straight dots we are entitled to an extra life.
+                if((scoreCnt % 5 == 0) && (scoreCnt != 0))
+                {
+                    gotLife = true;
+                }
+            }
+            
+            //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+            if((xRandomBall - ballRadius) <= 0 || (xRandomBall + ballRadius) >= canvas.width)
+            {
+	           ballSpeedX = -ballSpeedX;
+            }
+	        if((yRandomBall - ballRadius) <= 0 || (yRandomBall + ballRadius) >= canvas.height)
+            {
+		       ballSpeedY = -ballSpeedY;
+	        }
+            
+            //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
+            if(bounceBall.intersect(leftRight, upAndDownbody, radius))
+            {
+                if(lives == 0 && caught == false)
+                {
+                    alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
+                    location.reload();                                      //reload the page
+                }
+                else if(caught == false)//if pacman has lives but has been caught
+                {
+                    lives -= 1;     //take life away
+                    caught = true;  //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                }   
+            }
+            else//only when pacman/ball have both seperated that caught is set back to false
+            {
+                caught = false;
+            }
+            
+            xRandomBall += ballSpeedX;                          //increment bouncing balls x/y and changemouth counter
+            yRandomBall += ballSpeedY;  
+            changeMouth += 1;
+        
+        //request animation frame for this function and pass the animation id to var stopDown
+        stopDown = window.requestAnimationFrame(pacmanGoDown);
+    }
+    </script>
+  </body>
+</html>

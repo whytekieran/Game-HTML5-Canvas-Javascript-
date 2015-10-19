@@ -1,0 +1,22 @@
+/*body tag background colour*/
+body {background-color: black;}
+
+/*h1 tags styling*/
+h1 {text-align:center;
+	font-family:"Comic Sans MS", cursive, sans-serif;color:yellow;
+	font-size:59px;background-color:black;
+	width:100%;border:2px solid grey;}
+
+/*p tags styling*/
+p {text-align:center;font-family:tahoma;
+	font-size:120%;color:yellow;}
+
+/*styling for the two hyperlinked buttons ive created*/
+a.button{-webkit-appearance: button;
+          -moz-appearance: button;
+          appearance: button;
+          text-decoration: none;
+          color: initial;
+          padding: 10px;
+          width: 97%;
+          font-size: 250%;}
