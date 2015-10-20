@@ -29,14 +29,14 @@
         canvas.width = 1340;                                            //Setting width and height                            
         canvas.height = 620;
         var ctx = canvas.getContext("2d");  
-        ctx.fillStyle = "black";                                        //Creating a black background                         
+        ctx.fillStyle = "black";                                        //Creating a black background outside of canvas border to                        
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         var leftRight = 670;                                            //X co-ordinate for pacman character
         var upAndDownbody = 310;                                        //Y co-ordinate for pacman character
         var changeMouth = 0;                                            //counter for when pacmans mouth should open/close
-        var radius = 50;  //50                                              //pacmans radius
-        var dotRadius = 10;//10                                             //dot pacman chases radius
-        var ballRadius = 25; //25                                           //circle pacman avoids radius
+        var radius = 50;                                                    //pacmans radius
+        var dotRadius = 10;                                                 //dot pacman chases radius
+        var ballRadius = 25;                                                //circle pacman avoids radius
         var openCloseMouth1 = 0.25;                                     //angles for pacmans mouth when going right
         var openCloseMouth2 = 1.75;
         var openCloseMouth3 = 1.25;                                     //angles for pacmans mouth when going left
@@ -55,17 +55,25 @@
         var yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
         var ballSpeedX = 0.5  //speed of ball chasing pacman
         var ballSpeedY = 0.5;
-        var ballIncreaseSpeedX = 0.5;
+        var ballIncreaseSpeedX = 0.5; //How much we increase the speed by when pacman gets a dot
         var ballIncreaseSpeedY = 0.5;
-        var ballMaxSpeed = 30;
-        var scoreCnt = 0;//counter for the score
-        var scoreIncrease = 1; //increase score
+        var ballMaxSpeed = 30;                  //Maximum speed of the ball chasing pacman
+        var scoreCnt = 0;                       //counter for the score
+        var scoreIncrease = 1;                  //increase score
         var lives = 3;
-        var caught = false;
-        var gotLife = false;
-        var lifeDotLocationSet = false;
-        var lifeDotX = 0;
+        var caught = false;                     //Boolean to check if pacman has been hit by the ball
+        var gotLife = false;                    //Boolean to check if pacman is entitled to a life
+        var lifeDotLocationSet = false;         //Making sure the extra life location is set once and not at every animation frame
+        var lifeDotX = 0;                       //X and Y coordinates for the extra life dot
         var lifeDotY = 0;
+        
+        //Random x and y at startup for ball chasing pacman keep doing till correct (do/while)
+        do
+        {
+             var xRandomBall = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;    
+             var yRandomBall = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
+        }
+        while((xRandomBall <= ballRadius) || (xRandomBall >= 1315) || (yRandomBall <= ballRadius) || (yRandomBall >= 595));
         
         //Output Score and lives
         function outputUserInfo(ctx, score, lives)
@@ -104,14 +112,6 @@
         
         //call outputUserInfor() to output score and lives
         outputUserInfo(ctx, scoreCnt, lives);
-        
-        //Random x and y at startup for ball chasing pacman keep doing till correct (do/while)
-        do
-        {
-             var xRandomBall = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;    
-             var yRandomBall = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
-        }
-        while((xRandomBall <= ballRadius) || (xRandomBall >= 1315) || (yRandomBall <= ballRadius) || (yRandomBall >= 595));
          
         //Create and draw the dot object that pacman will chase, class define in Dot.js
         var dot = new Dot(xRandomDot, yRandomDot, dotRadius, ctx, "red");
