@@ -6,7 +6,7 @@
 **Module:** Graphic Programming </br>
 
 **----------------------------------------------------------------------------------------------------------------------------**
-**IMPORTANT:** This game has been primarily tested on Google Chrome and therefore i would recommend it as your browser of choice to run the game. This game also contains Javascript classes, a fairly new concept to javascript and yet to be fully standardized. Therefore some older browsers may not run it yet. Again i recommend a recent version of Google Chrome.</br>
+**IMPORTANT:** This game has been primarily tested on Google Chrome and therefore i would recommend it as your browser of choice to run the game. This game also contains Javascript classes, a fairly new concept to javascript and yet to be fully standardized. Therefore some older browsers may not run it yet. Again i recommend a recent version of Google Chrome. Finally this game uses some custom styled popup boxes. To do this i included some plugin code that is availible from JQuery. This code is contained in the file JQuery-Alert-Dialogs.</br>
 **----------------------------------------------------------------------------------------------------------------------------**
 
 ## A Brief Introduction
