@@ -15,13 +15,18 @@
   <body onkeyup="whichButton(event)">
     <!--Creating a canvas-->   
     <canvas id="canvasOne" style="border: solid 5px red; width:100%; height:100%;"></canvas>
-
     <!--External Javascript Files-->
     <script type="text/javascript" src="BorderCollisionsPacman.js"></script><!--Handles border collisons for pacman-->
     <script type="text/javascript" src="Dot.js"></script>
     <script type="text/javascript" src="MouthMovePacman.js"></script>
     <script type="text/javascript" src="BouncingBall.js"></script>
-    <!--Main Javascript files-->
+    <!--JQuery and Plugin files for custom alert and confirm popup boxes with JQuery-->
+    <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+    <script src="JQuery-Alert-Dialogs/js/jquery.js" type="text/javascript"></script>
+    <script src="JQuery-Alert-Dialogs/js/jquery.alerts.js" type="text/javascript"></script>
+    <link href="JQuery-Alert-Dialogs/css/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
+      
+    <!--Main Javascript file-->
     <script type="text/javascript">
         //Global Variables
         //Canvas variables
@@ -29,8 +34,7 @@
         canvas.width = 1340;                                            //Setting width and height                            
         canvas.height = 620;
         var ctx = canvas.getContext("2d");  
-        ctx.fillStyle = "black";                                        //Creating a black background outside of canvas border to                        
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "black";                                        //Creating a black background outside of canvas border to                     ctx.fillRect(0, 0, canvas.width, canvas.height);
         var leftRight = 670;                                            //X co-ordinate for pacman character
         var upAndDownbody = 310;                                        //Y co-ordinate for pacman character
         var changeMouth = 0;                                            //counter for when pacmans mouth should open/close
@@ -66,6 +70,7 @@
         var lifeDotLocationSet = false;         //Making sure the extra life location is set once and not at every animation frame
         var lifeDotX = 0;                       //X and Y coordinates for the extra life dot
         var lifeDotY = 0;
+        var play = true;                        //Boolean which will be set to false when pacman dies to stop the animation frame running in                                                   //the background behind the cust JQuery plugin popup menu 
         
         //Random x and y at startup for ball chasing pacman keep doing till correct (do/while)
         do
@@ -109,6 +114,11 @@
             
             return [speedX, speedY];
         }
+        
+      
+        jAlert('Press any arrow key to begin.' + 
+               '\nPacman will move in the first direction you press.' + 
+               '\nThe four arrow keys are used to control pacman during the game.', 'Start Instructions');
         
         //call outputUserInfor() to output score and lives
         outputUserInfo(ctx, scoreCnt, lives);
@@ -167,6 +177,9 @@
         //Make pacman go right
         function pacmanGoRight()
         {
+            //Only if play is true do we run the animation frame
+            if(play == true)
+            {
                 //Redraw canvas background 
                 ctx.fillStyle = "black";  
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -272,9 +285,21 @@
                    //only if his lives are 0 and he hasnt been caught previously
                    if(lives == 0 && caught == false)
                    {
-                        alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
-                        location.reload();                                      //reload the page(GAME OVER)
-                   }
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //Alert you have died, give the score also and uses jQuery plugin for custom confirm box
+                       jConfirm('You have died!\n Do you wish to play again or cancel?(Back to Google)', 'GAME OVER!', function(r) 
+                       {
+				           if(r)//If we click ok (play again)
+                           {
+                               location.reload();//reload the page
+                           }
+                           else//otherwise
+                           {
+                               window.location = "http://www.google.com/";//go to google
+                           }
+					   });
+                    }
                    else if(caught == false)//else if he still has lives and hasnt been already hit
                    {
                         lives -= 1;        //take lives away
@@ -292,11 +317,15 @@
             
             //request animation frame for this function and pass the animation id to var stopRight
             stopRight = window.requestAnimationFrame(pacmanGoRight);
+            }
         }
         
         //Make pacman go left
         function pacmanGoLeft()
         {
+            //Only if play is true do we run the animation frame
+            if(play == true)
+            {
                 //Redraw background 
                 ctx.fillStyle = "black";  
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -400,8 +429,20 @@
                 {
                     if(lives == 0 && caught == false)
                     {
-                        alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
-                        location.reload();                                      //reload the page
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //Alert you have died, give the score also and uses jQuery plugin for custom confirm box
+                       jConfirm('You have died!\n Do you wish to play again or cancel?(Back to Google)', 'GAME OVER!', function(r) 
+                       {
+				            if(r)//If the user clicks ok (play again)
+                            {
+                                location.reload();//reload the page
+                            }
+                            else//otherwise
+                            {
+                                window.location = "http://www.google.com/"; //go to google
+                            }
+					   });
                     }
                     else if(caught == false)//else if he is caught but still has lifes
                     {
@@ -420,11 +461,15 @@
             
             //request animation frame for this function and pass the animation id to var stopLeft
             stopLeft = window.requestAnimationFrame(pacmanGoLeft);
+            }
         }
         
         //Make pacman go up
        function pacmanGoUp()
        {
+           //Only if play is true do we run the animation frame
+           if(play == true)
+           {
                 //Redraw background 
                 ctx.fillStyle = "black";  
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -527,8 +572,20 @@
                 {
                     if(lives == 0 && caught == false)
                     {
-                        alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
-                        location.reload();                                      //reload the page
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //Alert you have died, give the score also and uses jQuery plugin for custom confirm box
+                       jConfirm('You have died!\n Do you wish to play again or cancel?(Back to Google)', 'GAME OVER!', function(r) 
+                       {
+				           if(r) //if user clicks ok (play again)
+                           {
+                               location.reload();//reload the page
+                           }
+                           else //otherwise
+                           {
+                               window.location = "http://www.google.com/"; //go to google
+                           }
+                       });                                   
                     }
                     else if(caught == false)
                     {
@@ -547,11 +604,15 @@
            
            //request animation frame for this function and pass the animation id to var stopUp
            stopUp = window.requestAnimationFrame(pacmanGoUp);
-       }
+        }
+    }
     
     //Make pacman go down
     function pacmanGoDown()
     {
+        //Only if play is true do we run the animation frame
+        if(play == true)
+        {
             //redraw background
             ctx.fillStyle = "black";  
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -653,8 +714,20 @@
             {
                 if(lives == 0 && caught == false)
                 {
-                    alert("Killed in action! \nYour score is: " +scoreCnt);//alert you have died, give the score
-                    location.reload();                                      //reload the page
+                   play = false; //we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                   //Alert you have died, give the score also and uses jQuery plugin for custom confirm box
+                   jConfirm('You have died!\n Do you wish to play again or cancel?(Back to Google)', 'GAME OVER!', function(r)
+                   {
+                       if(r)//if user clicks okay (play again)
+                       {
+                           location.reload();//reload the page
+                       }
+                       else //otherwise
+                       {
+                           window.location = "http://www.google.com/"; //go to google
+                       }
+                   });
                 }
                 else if(caught == false)//if pacman has lives but has been caught
                 {
@@ -673,6 +746,7 @@
         
         //request animation frame for this function and pass the animation id to var stopDown
         stopDown = window.requestAnimationFrame(pacmanGoDown);
+        }
     }
     </script>
   </body>
