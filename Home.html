@@ -4,13 +4,13 @@
    <head>
     <meta charset="UTF-8">
     <title>Game Home</title>
-    <!--CSS Styling for this page is done in Game.css-->
+    <!--CSS Styling for this page is done in Game.css, external style sheet-->
     <link rel="stylesheet" href="Game.css">
   </head>
   <body>
       <!--Homepage Header inside div with header id-->
       <div id="header">
-          <h1>Chase The Dot.</h1>
+          <h1>Chase The Dot.</h1><!--Main Header-->
       </div>
       
       <!--Canvas for the animation-->
@@ -30,20 +30,21 @@
       <script type="text/javascript" src="BouncingBall.js"></script>
       <script type="text/javascript">
           <!--Get handle on the canvas / variables-->
-          var canvas = document.getElementById("canvas"); 
-          canvas.width = 1348;                                                                       
+          var canvas = document.getElementById("canvas"); //Getting a handle on the HTML canvas
+          canvas.width = 1348;                              //Setting its width and height                                         
           canvas.height = 400;
-          var ctx = canvas.getContext("2d");
-          var dotRadius = 10;
+          var ctx = canvas.getContext("2d");                //Create our context for 2D animation (Kind of like our pencil)
+          var dotRadius = 10;                               //The follow are X,Y coordinates and radius for the ball and dot in the animation
           var dotX = 200;
           var dotY = 100;
           var ballX = 400;
           var ballY = 300;
           var ballRadius = 25;     
-          var move = 3;
+          var move = 3;                                     //Used to moce the dots position
           var ballSpeedX = 6;                                                                            
           var ballSpeedY = 6;
-          <!--Objects created from classes defined in external files-->
+          
+          //Objects created from classes defined in external files
           var dot = new Dot(dotX, dotY, dotRadius, ctx, "red");
           var bounceBall = new BouncingBall(0, 0, ballRadius, ctx, "blue");
         

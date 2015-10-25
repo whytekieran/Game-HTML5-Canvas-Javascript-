@@ -53,14 +53,14 @@ class Dot
         return this.colur;
     }
     
-    //move the x and y co-ordinates
+    //move the x and y co-ordinates function for moving the Dot
     moveDot(x, y)
     {
         this.x = x;
         this.y = y;
     }
     
-    //draw the dot
+    //draw the dot (function to draw the dot)
     drawDot()
     {
         this.ctx.fillStyle = this.colour;
@@ -79,7 +79,7 @@ class Dot
         var comparedBallY = y;
         var comparedBallR = r;
         
-        //Using Pythagorean theorem
+        //Using Pythagorean theorem to detect if two circles intersect
         var distanceUnrooted = Math.pow(comparedBallX - this.x, 2) + Math.pow(comparedBallY - this.y, 2);
         var distanceRooted = Math.sqrt(distanceUnrooted);
         var iDistanceRooted = (parseInt(distanceRooted, 10));

@@ -22,7 +22,7 @@ function rightBorderCollision(x, y, r, canvasWidth, bottomJaw, topJaw, ctx)
         //draw pacman, increment x, and return it.
         ctx.beginPath();
         ctx.arc(x, y, r, bottomJaw * Math.PI, 1.25 * Math.PI);
-        ctx.fillStyle = "rgb(255, 255, 0)";
+        ctx.fillStyle = "rgb(255, 255, 0)";                     //Yellow
         ctx.fill();
         ctx.beginPath();
         ctx.arc(x, y, r, 0.75 * Math.PI, topJaw * Math.PI);
