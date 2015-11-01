@@ -28,6 +28,7 @@
       <!--External Javascript files and internal file-->
       <script type="text/javascript" src="Dot.js"></script>
       <script type="text/javascript" src="BouncingBall.js"></script>
+      <script type="text/javascript" src="GameplayFunctions.js"></script>
       <script type="text/javascript">
           <!--Get handle on the canvas / variables-->
           var canvas = document.getElementById("canvas"); //Getting a handle on the HTML canvas
@@ -35,13 +36,14 @@
           canvas.height = 400;
           var ctx = canvas.getContext("2d");                //Create our context for 2D animation (Kind of like our pencil)
           var dotRadius = 10;                               //The follow are X,Y coordinates and radius for the ball and dot in the animation
-          var dotX = 200;
+          var directions = [];                              //keeps the changed directions (+ or -) for ball bouncing of canvas 
+          var dotX = 200;                                   //Used to moce the dots and balls position
           var dotY = 100;
           var ballX = 400;
           var ballY = 300;
-          var ballRadius = 25;     
-          var move = 3;                                     //Used to moce the dots position
-          var ballSpeedX = 6;                                                                            
+          var ballRadius = 25;                              //balls radius
+          var move = 3;                                     //incrementation amount for dot
+          var ballSpeedX = 6;                               //speed/incremetation amount for ball                                       
           var ballSpeedY = 6;
           
           //Objects created from classes defined in external files
@@ -51,15 +53,14 @@
           //Function to be ran with animation frame, two balls simple bounce around
           function chase() 
           {
-              //Redrawing the background
-            ctx.fillStyle = "black";  
-            ctx.fillRect(0, 0, canvas.width, canvas.height);  
+            //Redraw canvas background (defined in GameplayFunctions.js)
+            redrawCanvasBackground(ctx, canvas.height, canvas.width);  
         
-            //move and draw dot
+            //move and draw dot (defined in Dot.js)
             dot.moveDot(dotX, dotY);
             dot.drawDot(); //red dot 
             
-            //move and draw bouncing ball
+            //move and draw bouncing ball (defined in BouncingBall.js)
             bounceBall.moveBall(ballX, ballY);
             bounceBall.drawBall();
             
@@ -69,16 +70,12 @@
             { 
                 move = -move;
             }
-              
-            //collision detection for the bouncing ball for all four sides of the canavs
-            if((ballX - ballRadius) <= 0 || (ballX + ballRadius) >= canvas.width)
-            {
-	            ballSpeedX = -ballSpeedX;
-            }
-	        if((ballY - ballRadius) <= 0 || (ballY + ballRadius) >= canvas.height)
-            {
-		        ballSpeedY = -ballSpeedY;
-	        }
+            
+            //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+            //defined in BouncingBall.js
+            directions = bounceBall.makeBallBounce(canvas.width, canvas.height, ballSpeedX, ballSpeedY);
+            ballSpeedX = directions[0];
+            ballSpeedY = directions[1];
             
             //change balls position
             ballX += ballSpeedX;       
