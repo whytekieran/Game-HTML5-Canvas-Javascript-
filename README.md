@@ -1,7 +1,6 @@
 # Chase The Dot Game
 
 **Student:** Ciaran Whyte </br>
-**Student ID:** G00254624 </br>
 **Lecturer:** Ian Mcloughlin </br>
 **Module:** Graphic Programming </br>
 
