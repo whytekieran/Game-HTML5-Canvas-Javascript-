@@ -27,7 +27,7 @@ This game is composed of seven files. Two HTML files, four Javascript files and 
 * BorderCollisionsPacman.js
 * MoveMouthPacman.js
 
-_**Home.html**_ is the homepage allowing you to enter or exit. It contains a header, canvas and table with one row and two columns holding the buttons. Home.html also uses Game.css, BouncingBall.js and Dot.js as external files. These are explained further down.
+_**Home.html**_ is the homepage allowing you to enter or exit. It contains a header, canvas and table with one row and two columns holding the buttons. Home.html also uses Game.css, BouncingBall.js, Dot.js and GameplayFunctions.js as external files. These are explained further down.
 
 _**Game.css**_ is simple file providing CSS styling for Home.html, background, borders, button styling etc
 
