@@ -21,6 +21,7 @@ This game is composed of seven files. Two HTML files, four Javascript files and 
 * Home.html
 * Game.css
 * Index.html
+* GameplayFunctions.js
 * Dot.js
 * BouncingBall.js
 * BorderCollisionsPacman.js
@@ -36,7 +37,7 @@ _**Index.html**_ is the main page and its where the game is played. It uses all 
 * Then we then call two functions, one outputs the players lives and score to the screen. The other is then a popup box which shows the start instuctions.
 * The function which handles or key events is next. We find the key code and depending on if we are going, left, right, up or down we set the relevant animation frame function and cancel the others.
 * The last four functions simply define the functions being called by the key event, they are very similar but vary slightly depending on the direction that pacman is moving in. Some of the functions inside these four functions have been defined in the external javascript files, which file as been stated in comments beside the function calls. To run the game we use AnimationFrames, the onKeyUp event (called in html body tag) and cancelAnimationFrames along with good old fashioned logic :P 
-* _**GameplayFunctions.js**_ This .js file defines some general functions used in the game such as, popus boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen and redrawing the canvas background.
+_**GameplayFunctions.js**_ This .js file defines some general functions used in the game such as, popus boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen and redrawing the canvas background.
 
 _**Dot.js**_ is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
 
