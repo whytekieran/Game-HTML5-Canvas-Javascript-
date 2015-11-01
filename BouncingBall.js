@@ -53,4 +53,19 @@ class BouncingBall
             return false;
         }
     }
+    
+    makeBallBounce(canvasWidth, canvasHeight, ballDirX, ballDirY)
+    {
+        //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+        if((this.x - this.r) <= 0 || (this.x + this.r) >= canvasWidth)
+        {
+	       ballDirX = -ballDirX;
+        }
+	    if((this.y - this.r) <= 0 || (this.y + this.r) >= canvasHeight)
+        {
+		   ballDirY = -ballDirY;
+	    }
+        
+         return [ballDirX, ballDirY];
+    }
 }

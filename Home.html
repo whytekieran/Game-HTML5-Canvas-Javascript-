@@ -70,15 +70,15 @@
                 move = -move;
             }
               
-              //collision detection for the bouncing ball for all four sides of the canavs
-             if((ballX - ballRadius) <= 0 || (ballX + ballRadius) >= canvas.width)
-             {
-	             ballSpeedX = -ballSpeedX;
-             }
-	         if((ballY - ballRadius) <= 0 || (ballY + ballRadius) >= canvas.height)
-             {
-		         ballSpeedY = -ballSpeedY;
-	         }
+            //collision detection for the bouncing ball for all four sides of the canavs
+            if((ballX - ballRadius) <= 0 || (ballX + ballRadius) >= canvas.width)
+            {
+	            ballSpeedX = -ballSpeedX;
+            }
+	        if((ballY - ballRadius) <= 0 || (ballY + ballRadius) >= canvas.height)
+            {
+		        ballSpeedY = -ballSpeedY;
+	        }
             
             //change balls position
             ballX += ballSpeedX;       
