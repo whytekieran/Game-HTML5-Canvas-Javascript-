@@ -76,7 +76,17 @@
         var lifeDotY = 0;
         var stillHitCnt = 0;                    //counter that runs while pacman is hit
         var changePacmanColour = -1;            //will be 0 or 1, decideds if we change pacmans colour
+        var pacmanAudioOn = false;              //sets when pacman waka waka should be on/off
+        var pacmanDeadEndAudio = false;         //condition to turn off audio when pacman dies
+        var pacmanAudioResults = [];            //array to hold both the two booleans declared previous when returned from function
         var play = true;                        //Boolean which will be set to false when pacman dies to stop the animation frame running in                                                   //the background behind the cust JQuery plugin popup menu 
+        
+        //Creating audio objects
+        var pacmanAudio = new Audio('AudioFiles/WakaWaka.mp3');
+        var pacmanEatsAudio = new Audio('AudioFiles/PacmanGetsDot.mp3');
+        var pacmanDiesAudio = new Audio('AudioFiles/PacmanDies.mp3');
+        var pacmanIntroAudio = new Audio('AudioFiles/PacmanIntroMusic.mp3');
+        var pacmanHurtAudio = new Audio('AudioFiles/HurtBeep.mp3');
         
         //Create and draw the dot object that pacman will chase, class define in Dot.js
         var dot = new Dot(xRandomDot, yRandomDot, dotRadius, ctx, "red");
@@ -97,6 +107,9 @@
         
         //call outputUserInfo() to output score and lives (defined in GameplayFunctions.js)
         outputUserInfo(ctx, scoreCnt, lives);
+        
+        //Play pacman starting game music pass the audio to the function
+        pacmanBeginsAudio(pacmanIntroAudio);
    
         //Depending on which directional button is pressed call a directional function on pacman
         //turn off all other intervals and run only the direction specified.
@@ -112,7 +125,13 @@
                 window.cancelAnimationFrame(stopLeft);          //pass the id returned when the animation frame was created
                 window.cancelAnimationFrame(stopDown);
                 window.cancelAnimationFrame(stopRight);
-                pacmanGoRight();
+                
+                //Call startGameplayAudio() which controls when pacman waka waka is played. We pass the audio and two booleans
+                //to control when it is played (defined in Gameplayfunctions.js)
+                pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                pacmanAudioOn = pacmanAudioResults[0];
+                pacmanDeadEndAudio = pacmanAudioResults[1];
+                pacmanGoRight(); //go right animation frame function
             }
             else if(choice == 37)//Left
             {
@@ -121,7 +140,10 @@
                 window.cancelAnimationFrame(stopLeft);
                 window.cancelAnimationFrame(stopDown);
                 window.cancelAnimationFrame(stopRight);
-                pacmanGoLeft();
+                pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                pacmanAudioOn = pacmanAudioResults[0];
+                pacmanDeadEndAudio = pacmanAudioResults[1];
+                pacmanGoLeft(); //go left animation frame function
             }
             else if(choice == 38)//Up
             {
@@ -130,7 +152,10 @@
                 window.cancelAnimationFrame(stopLeft);
                 window.cancelAnimationFrame(stopDown);
                 window.cancelAnimationFrame(stopRight);
-                pacmanGoUp();
+                pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                pacmanAudioOn = pacmanAudioResults[0];
+                pacmanDeadEndAudio = pacmanAudioResults[1];
+                pacmanGoUp(); //go up animation frame function
             }
             else if(choice == 40)//Down
             {
@@ -139,7 +164,10 @@
                 window.cancelAnimationFrame(stopLeft);
                 window.cancelAnimationFrame(stopDown);
                 window.cancelAnimationFrame(stopRight);
-                pacmanGoDown();
+                pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                pacmanAudioOn = pacmanAudioResults[0];
+                pacmanDeadEndAudio = pacmanAudioResults[1];
+                pacmanGoDown(); //go down animation frame fucntion
             }
         }
         
@@ -179,6 +207,8 @@
                     //If they(extra life dot / pacman) intersect give an extra life (intersect define in Dot.js)
                     if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                     {
+                        gotDotAudio(pacmanEatsAudio);//play the got dot audio, pass in the audio object
+                        
                         if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                         {
                             lives += 1;
@@ -224,6 +254,8 @@
                //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
                if(dot.intersect(leftRight, upAndDownbody, radius))
                {
+                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                   
                    //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function next frame
                    xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
                    yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
@@ -264,11 +296,23 @@
                //Using bounceBalls intersect function, if pacman collides with the bouncing ball. (defined in BouncingBall.js)
                if(bounceBall.intersect(leftRight, upAndDownbody, radius))
                {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
                    //Makes sure that when pacman is hit, he is only hit once
                    //only if his lives are 0 and he hasnt been caught previously
                    if(lives == 0 && caught == false)
                    {
+                       pacmanDeadEndAudio = true; //set end audio to true because game is over
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanDeadEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                       pacmanDeadAudio(pacmanDiesAudio);
                        
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
                        outputGameOverPopup(scoreCnt);
@@ -329,6 +373,8 @@
                     //If they intersect give an extra life (defined in Dot.js)
                     if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                     {
+                        gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                        
                         if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                         {
                             lives += 1;
@@ -375,6 +421,8 @@
                 //Using the Dot classes intersect function to determine if pacman has caught the dot and if so (defined in Dot.js)
                 if(dot.intersect(leftRight, upAndDownbody, radius))
                 {
+                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object  
+                    
                    //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
                    xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
                    yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
@@ -416,9 +464,23 @@
                 //(defined in BouncingBall.js)
                 if(bounceBall.intersect(leftRight, upAndDownbody, radius))
                 {
+                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio
+                    pacmanInjuredAudio(pacmanHurtAudio);
+                    
+                    //Makes sure that when pacman is hit, he is only hit once
+                    //only if his lives are 0 and he hasnt been caught previously
                     if(lives == 0 && caught == false)
                     {
+                       pacmanDeadEndAudio = true; //set end audio to true because game is over
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                        
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true    
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanDeadEndAudio = pacmanAudioResults[1];
+                        
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                       pacmanDeadAudio(pacmanDiesAudio);
                        
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
                        outputGameOverPopup(scoreCnt);
@@ -478,6 +540,8 @@
                     //If they intersect give an extra life (Defined in Dot.js)
                     if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                     {
+                        gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                        
                         if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                         {
                             lives += 1;
@@ -525,6 +589,8 @@
                 //(Defined in Dot.js)
                 if(dot.intersect(leftRight, upAndDownbody, radius))
                 {
+                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                    
                    //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
                    xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
                    yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
@@ -566,10 +632,22 @@
                 //(Defined in BouncingBall.js)
                 if(bounceBall.intersect(leftRight, upAndDownbody, radius))
                 {
+                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio
+                    pacmanInjuredAudio(pacmanHurtAudio);
+                    
                     if(lives == 0 && caught == false)
                     {
+                       pacmanDeadEndAudio = true; //set end audio to true because game is over
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
                        
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanDeadEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                       pacmanDeadAudio(pacmanDiesAudio);    
+                        
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
                        outputGameOverPopup(scoreCnt);                                 
                     }
@@ -628,6 +706,8 @@
                 //If they intersect give an extra life (Defined in Dot.js)
                 if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                 {
+                    gotDotAudio(pacmanEatsAudio);
+                    
                     if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                     {
                         lives += 1;
@@ -675,6 +755,8 @@
             //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
             if(dot.intersect(leftRight, upAndDownbody, radius))
             {
+                gotDotAudio(pacmanEatsAudio); //play got dot audio, pass in audio object
+                
                 //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
                 xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
                 yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
@@ -715,9 +797,21 @@
             //(Defined in BouncingBall.js)
             if(bounceBall.intersect(leftRight, upAndDownbody, radius))
             {
+                //Play pacman hurt audio which is done by the fucntion here, pass in the audio
+                pacmanInjuredAudio(pacmanHurtAudio);
+                
                 if(lives == 0 && caught == false)
                 {
+                   pacmanDeadEndAudio = true; //set end audio to true because game is over
                    play = false; //we are dead so set play to false. Stops frames running in background behind the popup
+                
+                   //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                   pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
+                   pacmanAudioOn = pacmanAudioResults[0];
+                   pacmanDeadEndAudio = pacmanAudioResults[1];
+                    
+                   //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                   pacmanDeadAudio(pacmanDiesAudio);
                        
                    //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
                    outputGameOverPopup(scoreCnt);

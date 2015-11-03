@@ -8,7 +8,54 @@ function outputUserInfo(ctx, score, lives)
     ctx.font = "bold 28px Arial";
     ctx.fillText("LIVES: "+lives, 1143, 80);
 }
-        
+
+//This function controls the audio (waka waka) for pacman which will play for an hour. Starts playing if it hasnt already been started. If it //has been started and pacman isnt dead then dont do anything, and if its been started and pacman is dead then stop it.
+function startGameplayAudio(audioOn, pacmanDead, audio)
+{
+    if(audioOn == false && pacmanDead == false)
+    {
+        audio.volume = 0.1;
+        audio.play();                           //play audio
+        audioOn = true;                         //audio is playing so set audioOn to true
+        return [audioOn, pacmanDead];
+    }
+    else if(audioOn == true && pacmanDead == false)
+    {
+        return [audioOn, pacmanDead];
+    }
+    else if(pacmanDead == true && audioOn == true)
+    {
+        audio.pause();
+        audio.currentTime = 0;
+        return [audioOn, pacmanDead];
+    }
+}
+
+//Function to run sound when pacman catches a dot. Sound only runs for a couple of seconds so no need to add extra controls for it.
+function gotDotAudio(audio)
+{
+    audio.play(); //play the audio
+}
+
+//Function to run the pacman dead audio, takes the audio as an argument and runs it.
+function pacmanDeadAudio(audio)
+{
+    audio.play();
+}
+
+//Function to run the pacman start of game audio, takes the audio as an argument and runs it.
+function pacmanBeginsAudio(audio)
+{
+    audio.play();
+}
+
+//Function to run the pacman start of game audio, takes the audio as an argument and runs it.
+function pacmanInjuredAudio(audio)
+{
+    audio.volume = 1.0;
+    audio.play();
+}
+ 
 //Function to increase speed of the ball chasing pacman either use + or - to add to the ball speed depending on its sign.
 function increaseBallSpeed(speedX, speedY)
 {
@@ -33,8 +80,7 @@ function increaseBallSpeed(speedX, speedY)
     {
         speedY -= ballIncreaseSpeedY;
     }
-            
-        return [speedX, speedY];
+    return [speedX, speedY];
 }
         
 //Output the game instructions to the user before the game begins.
