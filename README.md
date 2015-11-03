@@ -43,6 +43,8 @@ _**Index.html**_ is the main page and its where the game is played. It uses all 
 3. pacmanGoUp()
 4. pacmanGoDown()
 
+Each of these functions runs an animation frame and the one thats run depends on which arrow key we press and is handled by the whichbutton() method. If there is a new button push the current running animation frame is cancelled and the next is run from that point. 
+
 _**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popus boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background and various functions responsible for the audio of the game.
 
 _**Dot.js**_ is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
