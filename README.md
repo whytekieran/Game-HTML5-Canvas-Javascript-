@@ -32,13 +32,13 @@ _**Home.html**_ is the homepage allowing you to enter or exit. It contains a hea
 _**Game.css**_ is simple file providing CSS styling for Home.html, background, borders, button styling etc
 
 _**Index.html**_ is the main page and its where the game is played. It uses all .js files as external files. The HTML is simple, only including a canvas. The main running javascript program you could say, runs here. Its structured as follows: </br>
-* At the top we have the external javascript files and global variables, then we create three objects. two dots, one for pacman to chase and one for extra lives. Then a ball which pacman must avoid.
+* At the top we have the external javascript files and global variables, then we create eight objects. Five of these are audio objects, two dot objects, one for pacman to chase and one for extra lives. Then a ball object which pacman must avoid.
 * There is then a do while which sets x and y coordinates for the ball object chasing pacman.
 * Then we then call two functions, one outputs the players lives and score to the screen. The other is then a popup box which shows the start instuctions.
-* The function which handles the key events is next. We find the key code and depending on if we are going, left, right, up or down we set the relevant animation frame function and cancel the others, the function is attached to the body tag.
+* The function which handles the key events is next. We find the key code and depending on if we are going, left, right, up or down we set the relevant animation frame function and cancel the others, the function is attached to the body tag. Also contained inside this function we start the games audio. The function startGameplayAudio() which is defined in GameplayFunctions.js starts the audio if it hasnt already been started, otherwise it does nothing.
 * The last four functions simply define the functions being called by the key event, they are very similar but vary slightly depending on the direction that pacman is moving in. Some of the functions used inside these four functions have been defined in the external javascript files, which file as been stated in comments beside the function calls. To run the game we use AnimationFrames, the onKeyUp event (called in html body tag) and cancelAnimationFrames along with good old fashioned logic.
 
-_**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popus boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen and redrawing the canvas background.
+_**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popus boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background and various functions responsible for the audio of the game.
 
 _**Dot.js**_ is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
 
