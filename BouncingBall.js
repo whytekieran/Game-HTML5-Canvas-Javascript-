@@ -54,6 +54,7 @@ class BouncingBall
         }
     }
     
+    //Makes a bouncing ball bounce around the canvas
     makeBallBounce(canvasWidth, canvasHeight, ballDirX, ballDirY)
     {
         //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)

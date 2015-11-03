@@ -14,7 +14,7 @@ function startGameplayAudio(audioOn, pacmanDead, audio)
 {
     if(audioOn == false && pacmanDead == false)
     {
-        audio.volume = 0.1;
+        audio.volume = 0.25;
         audio.play();                           //play audio
         audioOn = true;                         //audio is playing so set audioOn to true
         return [audioOn, pacmanDead];
@@ -31,21 +31,34 @@ function startGameplayAudio(audioOn, pacmanDead, audio)
     }
 }
 
+//Plays the audio music for the homepage in a loop.
+function playHomePageMusic(audio)
+{
+    audio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    audio.play();
+}
+
 //Function to run sound when pacman catches a dot. Sound only runs for a couple of seconds so no need to add extra controls for it.
 function gotDotAudio(audio)
 {
+    audio.volume = 0.5;
     audio.play(); //play the audio
 }
 
 //Function to run the pacman dead audio, takes the audio as an argument and runs it.
 function pacmanDeadAudio(audio)
 {
+    audio.volume = 0.5;
     audio.play();
 }
 
 //Function to run the pacman start of game audio, takes the audio as an argument and runs it.
 function pacmanBeginsAudio(audio)
 {
+    audio.volume = 0.5;
     audio.play();
 }
 
@@ -112,5 +125,16 @@ function outputGameOverPopup(score)
             window.location = "Home.html";//go back to home
         }
     });
+}
+
+//Set the counter to change pacmans mouth back to zero if it is 7
+function resetChangeMouthPositionCounter(changeMouth)
+{
+    if(changeMouth == 7)
+    {
+        changeMouth = 0;
+    }
+    
+    return changeMouth;
 }
         

@@ -45,6 +45,10 @@
           var move = 3;                                     //incrementation amount for dot
           var ballSpeedX = 6;                               //speed/incremetation amount for ball                                       
           var ballSpeedY = 6;
+          var homeAudio = new Audio('AudioFiles/Home.mp3');
+          
+          //Play the audio for the home page (function defined in GameplayFunctions.js)
+          playHomePageMusic(homeAudio);
           
           //Objects created from classes defined in external files
           var dot = new Dot(dotX, dotY, dotRadius, ctx, "red");

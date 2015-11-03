@@ -35,29 +35,28 @@
     <!--Main Javascript file-->
     <script type="text/javascript">
         //Global Variables
-        var canvas = document.getElementById("canvasOne"); 
+        var canvas = document.getElementById("canvasOne");              //Get handle on the canvas
         canvas.width = 1340;                                            //Setting width and height                            
         canvas.height = 620;
-        var ctx = canvas.getContext("2d");  
-        ctx.fillStyle = "black";                                        //Creating a black background outside of canvas border to                     ctx.fillRect(0, 0, canvas.width, canvas.height);
+        var ctx = canvas.getContext("2d");                              //Get context for the canvas
         var leftRight = 670;                                            //X co-ordinate for pacman character
         var upAndDownbody = 310;                                        //Y co-ordinate for pacman character
         var changeMouth = 0;                                            //counter for when pacmans mouth should open/close
         var radius = 50;                                                    //pacmans radius
         var dotRadius = 10;                                                 //dot pacman chases radius
         var ballRadius = 25;                                                //circle pacman avoids radius
-        var openCloseMouth1 = 0.25;                                     //angles for pacmans mouth when going right
+        var openCloseMouth1 = 0.25;                                     //2 angles for pacmans mouth when going right
         var openCloseMouth2 = 1.75;
-        var openCloseMouth3 = 1.25;                                     //angles for pacmans mouth when going left
+        var openCloseMouth3 = 1.25;                                     //2 angles for pacmans mouth when going left
         var openCloseMouth4 = 0.75;
-        var openCloseMouth5 = 1.75;                                     //angles for pacmans mouth when going up
+        var openCloseMouth5 = 1.75;                                     //2 angles for pacmans mouth when going up
         var openCloseMouth6 = 1.25;
-        var openCloseMouth7 = 0.25;                                     //angles for pacmans mouth when going down
+        var openCloseMouth7 = 0.25;                                     //2 angles for pacmans mouth when going down
         var openCloseMouth8 = 0.75;
         var mouthPositions = [];                                        //array to take the two return values of change mouth functions
-        var speeds = [];
+        var speeds = [];                                                //holds x,y speeds returned from increase ball speed function
         var directions = [];                                            //keeps the changed directions (+ or -) for ball bouncing of canvas 
-        var stopRight;                                                  //variables used to clear intervals
+        var stopRight;                                                  //4 variables used to clear intervals
         var stopLeft;
         var stopUp;
         var stopDown;
@@ -108,7 +107,7 @@
         //call outputUserInfo() to output score and lives (defined in GameplayFunctions.js)
         outputUserInfo(ctx, scoreCnt, lives);
         
-        //Play pacman starting game music pass the audio to the function
+        //Play pacman starting game music pass the audio to the function (defined in GameplayFunctions.js)
         pacmanBeginsAudio(pacmanIntroAudio);
    
         //Depending on which directional button is pressed call a directional function on pacman
@@ -207,7 +206,7 @@
                     //If they(extra life dot / pacman) intersect give an extra life (intersect define in Dot.js)
                     if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                     {
-                        gotDotAudio(pacmanEatsAudio);//play the got dot audio, pass in the audio object
+                        gotDotAudio(pacmanEatsAudio);//play the got dot audio, pass in the audio object (defined in GameplayFunctions.js)
                         
                         if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                         {
@@ -218,24 +217,23 @@
                     }
                 }
                 
-                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.
-                if(changeMouth == 7)
-                {
-                    changeMouth = 0;
-                }
+                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.(open/close)
+                //changemouth is incremented at the bottom of this function.
+                changeMouth = resetChangeMouthPositionCounter(changeMouth);
                 
                //change mouth functions are defined in MouthMovePacman.js you can see changeMouth is passed as a parameter
                mouthPositions = changeMouthRight(changeMouth, openCloseMouth1, openCloseMouth2);
                openCloseMouth1 = mouthPositions[0];
                openCloseMouth2 = mouthPositions[1];  
                
-               //if pacman hasnt been caught we just draw him as normal
+               //if pacman hasnt been caught by the dot we just draw him as normal
                if(caught == false)
                {
                     //Pacman only goes right while X is less than border X, function defined in BorderCollisionsPacman.js
+                    //the function detects collisions between pacman and canvas border & draws pacman
                     leftRight = rightBorderCollision(leftRight, upAndDownbody, radius, canvas.width, openCloseMouth1, openCloseMouth2, ctx,                                                     "yellow");
                }
-               else if(caught == true)//but if he has been caught
+               else if(caught == true)//but if he has been caught by the dot
                {
                    //increment counter and perform modulus % 2 operation to get either 0 or 1
                    stillHitCnt += 1;
@@ -254,7 +252,7 @@
                //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
                if(dot.intersect(leftRight, upAndDownbody, radius))
                {
-                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object (defined in GameplayFunctions.js)
                    
                    //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function next frame
                    xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
@@ -290,13 +288,13 @@
                //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
                //defined in BouncingBall.js
                directions = bounceBall.makeBallBounce(canvas.width, canvas.height, ballSpeedX, ballSpeedY);
-               ballSpeedX = directions[0];
+               ballSpeedX = directions[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
                ballSpeedY = directions[1];
                 
                //Using bounceBalls intersect function, if pacman collides with the bouncing ball. (defined in BouncingBall.js)
                if(bounceBall.intersect(leftRight, upAndDownbody, radius))
                {
-                   //Play pacman hurt audio which is done by the function here, pass in the audio
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
                    pacmanInjuredAudio(pacmanHurtAudio);
                    
                    //Makes sure that when pacman is hit, he is only hit once
@@ -306,12 +304,13 @@
                        pacmanDeadEndAudio = true; //set end audio to true because game is over
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
                        
-                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
                        pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
                        pacmanAudioOn = pacmanAudioResults[0];
                        pacmanDeadEndAudio = pacmanAudioResults[1];
                        
-                       //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
                        pacmanDeadAudio(pacmanDiesAudio);
                        
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
@@ -373,7 +372,7 @@
                     //If they intersect give an extra life (defined in Dot.js)
                     if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                     {
-                        gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                        gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object (defined in GameplayFunctions.js)
                         
                         if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                         {
@@ -384,13 +383,10 @@
                     }
                 }
             
-                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.
-                if(changeMouth == 7)
-                {
-                    changeMouth = 0;
-                }
+                //Everytime function is ran 7times we set to zero. Because every 6 times we change pacmans mouth.
+                changeMouth = resetChangeMouthPositionCounter(changeMouth);
                 
-                //change mouth functions are defined in MouthMovePacman.js
+                //change mouth functions are defined in MouthMovePacman.js Changes position of pacmans mouth if changemouth is 6.
                 mouthPositions = changeMouthLeft(changeMouth, openCloseMouth3, openCloseMouth4);
                 openCloseMouth3 = mouthPositions[0];
                 openCloseMouth4 = mouthPositions[1];  
@@ -421,7 +417,7 @@
                 //Using the Dot classes intersect function to determine if pacman has caught the dot and if so (defined in Dot.js)
                 if(dot.intersect(leftRight, upAndDownbody, radius))
                 {
-                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object  
+                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object (defined in GameplayFunctions.js)
                     
                    //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
                    xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
@@ -464,7 +460,7 @@
                 //(defined in BouncingBall.js)
                 if(bounceBall.intersect(leftRight, upAndDownbody, radius))
                 {
-                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio
+                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio (defined in GameplayFunctions.js)
                     pacmanInjuredAudio(pacmanHurtAudio);
                     
                     //Makes sure that when pacman is hit, he is only hit once
@@ -479,7 +475,7 @@
                        pacmanAudioOn = pacmanAudioResults[0];
                        pacmanDeadEndAudio = pacmanAudioResults[1];
                         
-                       //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
                        pacmanDeadAudio(pacmanDiesAudio);
                        
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
@@ -540,7 +536,7 @@
                     //If they intersect give an extra life (Defined in Dot.js)
                     if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                     {
-                        gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                        gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object (defined in GameplayFunctions.js)
                         
                         if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                         {
@@ -551,13 +547,10 @@
                     }
                 }
                 
-                //Everytime function is ran 7times we set to zero. every 6 times we change pacmans mouth.
-                if(changeMouth == 7)
-                {
-                    changeMouth = 0;
-                }
+                //Everytime function is ran 7times we set to zero. Because every 6 times we change pacmans mouth.
+                changeMouth = resetChangeMouthPositionCounter(changeMouth);
                 
-                //change mouth functions are defined in MouthMovePacman.js
+                //change mouth functions are defined in MouthMovePacman.js. If changeMouth = 6 then we will open/close pacmans mouth
                 mouthPositions = changeMouthUp(changeMouth, openCloseMouth5, openCloseMouth6);
                 openCloseMouth5 = mouthPositions[0];
                 openCloseMouth6 = mouthPositions[1];  
@@ -589,7 +582,7 @@
                 //(Defined in Dot.js)
                 if(dot.intersect(leftRight, upAndDownbody, radius))
                 {
-                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object
+                   gotDotAudio(pacmanEatsAudio); //play the got dot audio, pass in the audio object (defined in GameplayFunctions.js)
                     
                    //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
                    xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
@@ -632,7 +625,7 @@
                 //(Defined in BouncingBall.js)
                 if(bounceBall.intersect(leftRight, upAndDownbody, radius))
                 {
-                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio
+                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio (defined in GameplayFunctions.js)
                     pacmanInjuredAudio(pacmanHurtAudio);
                     
                     if(lives == 0 && caught == false)
@@ -641,11 +634,12 @@
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
                        
                        //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                       //(defined in GameplayFunctions.js)
                        pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
                        pacmanAudioOn = pacmanAudioResults[0];
                        pacmanDeadEndAudio = pacmanAudioResults[1];
                        
-                       //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
                        pacmanDeadAudio(pacmanDiesAudio);    
                         
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
@@ -706,7 +700,7 @@
                 //If they intersect give an extra life (Defined in Dot.js)
                 if(dotExtraLife.intersect(leftRight, upAndDownbody, radius))
                 {
-                    gotDotAudio(pacmanEatsAudio);
+                    gotDotAudio(pacmanEatsAudio); //(defined in GameplayFunctions.js)
                     
                     if(gotLife == true)//only if we havent been given the life already then give it and restrict permission for another
                     {
@@ -717,11 +711,8 @@
                 }
             }
     
-            //Everytime function is ran 7times we set to zero. every 6times we change pacmans mouth.
-            if(changeMouth == 7)
-            {
-                changeMouth = 0;
-            }
+            //Everytime function is ran 7times we set to zero. Because every 6 times we change pacmans mouth.
+            changeMouth = resetChangeMouthPositionCounter(changeMouth);
         
             //change mouth functions are defined in MouthMovePacman.js
             mouthPositions = changeMouthDown(changeMouth, openCloseMouth7, openCloseMouth8);
@@ -755,7 +746,7 @@
             //Using the Dot classes intersect function to determine if pacman has caught the dot and if so 
             if(dot.intersect(leftRight, upAndDownbody, radius))
             {
-                gotDotAudio(pacmanEatsAudio); //play got dot audio, pass in audio object
+                gotDotAudio(pacmanEatsAudio); //play got dot audio, pass in audio object (defined in GameplayFunctions.js)
                 
                 //Set a new x/y co-ordinate for it and move it. Dot will be redrawn at start of function
                 xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;     
@@ -797,7 +788,7 @@
             //(Defined in BouncingBall.js)
             if(bounceBall.intersect(leftRight, upAndDownbody, radius))
             {
-                //Play pacman hurt audio which is done by the fucntion here, pass in the audio
+                //Play pacman hurt audio which is done by the fucntion here, pass in the audio (defined in GameplayFunctions.js)
                 pacmanInjuredAudio(pacmanHurtAudio);
                 
                 if(lives == 0 && caught == false)
@@ -806,11 +797,12 @@
                    play = false; //we are dead so set play to false. Stops frames running in background behind the popup
                 
                    //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                   //(defined in GameplayFunctions.js)
                    pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanDeadEndAudio, pacmanAudio);
                    pacmanAudioOn = pacmanAudioResults[0];
                    pacmanDeadEndAudio = pacmanAudioResults[1];
                     
-                   //call pacmanDeadAudio() and pass the audio to the function where it will be played
+                   //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
                    pacmanDeadAudio(pacmanDiesAudio);
                        
                    //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)

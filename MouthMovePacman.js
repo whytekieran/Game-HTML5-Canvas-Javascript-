@@ -1,9 +1,9 @@
 //The folling functions are responsible for opening/closing pacmans mouth depending on what direction he is going
-//If he is going right, function takes changemouth which only changes the mouth position every 18 times the function is ran
+//If he is going right, function takes changemouth which only changes the mouth position every 6 times the function is ran
 //And the two angles for his top/bottom jaw
 function changeMouthRight(changeMouth, openCloseMouth1, openCloseMouth2)
 {
-    if(changeMouth == 6)//if the function is on its 18th iteration
+    if(changeMouth == 6)//if the function is on its 6th iteration (6, 12, 18, 24.....etc)
     {
         //If his mouth is open
         if(openCloseMouth1 == 0.25 && openCloseMouth2 == 1.75)
@@ -22,12 +22,9 @@ function changeMouthRight(changeMouth, openCloseMouth1, openCloseMouth2)
     return [openCloseMouth1, openCloseMouth2];//always return the angles as an array regardless of whats done
 }
 
-//The folling functions are responsible for opening/closing pacmans mouth depending on what direction he is going
-//If he is going left, function takes changemouth which only changes the mouth position every 18 times the function is ran
-//And the two angles for his top/bottom jaw
 function changeMouthLeft(changeMouth, openCloseMouth3, openCloseMouth4)
 {
-    if(changeMouth == 6)//if the function is on its 18th iteration
+    if(changeMouth == 6)//if the function is on its 6th iteration
     {
         //If his mouth is open
         if(openCloseMouth3 == 1.25 && openCloseMouth4 == 0.75)
@@ -46,12 +43,9 @@ function changeMouthLeft(changeMouth, openCloseMouth3, openCloseMouth4)
     return [openCloseMouth3, openCloseMouth4];//always return the angles as an array regardless of whats done
 }
 
-//The folling functions are responsible for opening/closing pacmans mouth depending on what direction he is going
-//If he is going up, function takes changemouth which only changes the mouth position every 18 times the function is ran
-//And the two angles for his top/bottom jaw
 function changeMouthUp(changeMouth, openCloseMouth5, openCloseMouth6)
 {
-    if(changeMouth == 6)//if the function is on its 18th iteration
+    if(changeMouth == 6)//if the function is on its 6th iteration
     {
         //If his mouth is open
         if(openCloseMouth5 == 1.75 && openCloseMouth6 == 1.25)
@@ -70,12 +64,9 @@ function changeMouthUp(changeMouth, openCloseMouth5, openCloseMouth6)
     return [openCloseMouth5, openCloseMouth6];//always return the angles as an array regardless of whats done
 }
 
-//The folling functions are responsible for opening/closing pacmans mouth depending on what direction he is going
-//If he is going up, function takes changemouth which only changes the mouth position every 18 times the function is ran
-//And the two angles for his top/bottom jaw
 function changeMouthDown(changeMouth, openCloseMouth7, openCloseMouth8)
 {
-   if(changeMouth == 6)//if the function is on its 18th iteration
+   if(changeMouth == 6)//if the function is on its 6th iteration
     {
         //If his mouth is open
         if(openCloseMouth7 == 0.25 && openCloseMouth8 == 0.75)
