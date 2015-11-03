@@ -36,7 +36,7 @@ _**Index.html**_ is the main page and its where the game is played. It uses all 
 * There is then a do while which sets x and y coordinates for the ball object chasing pacman.
 * Then we then call two functions, one outputs the players lives and score to the screen. The other is then a popup box which shows the start instuctions.
 * The function which handles the key events is next. We find the key code and depending on if we are going, left, right, up or down we set the relevant animation frame function and cancel the others, the function is attached to the body tag. Also contained inside this function we start the games audio. The function startGameplayAudio() which is defined in GameplayFunctions.js starts the audio if it hasnt already been started, otherwise it does nothing.
-* The last four functions simply define the functions being called by the key event, they are very similar but vary slightly depending on the direction that pacman is moving in. Some of the functions used inside these four functions have been defined in the external javascript files, which file as been stated in comments beside the function calls. The functions are called:
+* The last four functions simply define the functions being called by the key event, they are very similar but vary slightly depending on the direction that pacman is moving in. Some of the functions used inside these four functions have been defined in the external javascript files, which file as been stated in comments beside the function calls. The functions are called:<br/>
 1. pacmanGoRight()
 2. pacmanGoLeft()
 3. pacmanGoUp()
