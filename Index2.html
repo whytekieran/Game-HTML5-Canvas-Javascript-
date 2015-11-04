@@ -35,29 +35,32 @@
       
     <!--Main Javascript file-->
     <script type="text/javascript">
-        
         //Global Variables
-        var canvas = document.getElementById("canvasOne");                                              //Get handle on the canvas
-        canvas.width = 1340;                                                                            //Setting width and height of canvas
+        var canvas = document.getElementById("canvasOne");                                             //Get handle on the canvas
+        canvas.width = 1340;                                                                           //Setting width and height of canvas
         canvas.height = 620;
-        var ctx = canvas.getContext("2d");                                                              //Get context for the canvas
-        var xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;    //Random x/y for dot pacman chases  
+        var ctx = canvas.getContext("2d");                                                             //Get context for the canvas
+        var xRandomDot = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;   //Random x/y for dot pacman chases  
         var yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
         
-        //Create and draw the dot object that pacman will chase, class define in Dot.js also create a second dot and ball but dont draw yet.
-        //The extra dot is for extra lives and ball that chases pacman
+        //Create and draw the dot object that pacman will chase, class define in Dot.js
         var dot = new Dot(xRandomDot, yRandomDot, dotRadius, ctx, "red");
         var dotExtraLife = new Dot(0, 0, 10, ctx, "yellow");
-        dot.drawDot();                                                     //Calling drawDot class function 
-        var bounceBall = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball object to catch pacman class defined in BouncingBall.js
+        dot.drawDot();  
+        var bounceBall1 = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball1 object to catch pacman class defined in BouncingBall.js
+        var bounceBall2 = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball2 object to catch pacman class defined in BouncingBall.js
         
-        //Random x and y at startup for ball chasing pacman keep doing till correct (do/while)
+        //Random x and y at startup for balls chasing pacman keep doing till correct (do/while)
+        //Two balls in this level not one.
         do
         {
-             var xRandomBall = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;    
-             var yRandomBall = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
+            var xRandomBall1 = Math.floor((Math.random() * (canvas.width - (dotRadius * 2)))) + dotRadius;    
+            var yRandomBall1 = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
+            var xRandomBall2 = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
+            var yRandomBall2 = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius;
         }
-        while((xRandomBall <= ballRadius) || (xRandomBall >= 1315) || (yRandomBall <= ballRadius) || (yRandomBall >= 595));
+        while((xRandomBall1 <= ballRadius) || (xRandomBall1 >= 1315) || (yRandomBall1 <= ballRadius) || (yRandomBall1 >= 595)
+             || (xRandomBall2 <= ballRadius) || (xRandomBall2 >= 1315) || (yRandomBall2 <= ballRadius) || (yRandomBall2 >= 595));
         
         //Output the starting popup menu (defined in GameplayFunctions.js)
         startingInstructionsPopup();
@@ -140,18 +143,13 @@
                 //output the score and lives of user (defined in GameplayFunctions.js)
                 outputUserInfo(ctx, scoreCnt, lives);
             
-                //If the score is >= 1700 then we call a function which moves player to level two (defined in GameplayFunctions.js)
-                if(scoreCnt >= 1700)
-                {
-                    moveToLevelTwo(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
-                    play = false;
-                }
-                
                 dot.drawDot();// Draw/redraw random dot for pacman to chase
                 
-                //Move x/y of bouncing ball and then draw it (Defined in BouncingBall.js)
-                bounceBall.moveBall(xRandomBall, yRandomBall);
-                bounceBall.drawBall();
+                //Move x/y of bouncing balls and then draw them (Defined in BouncingBall.js)
+                bounceBall1.moveBall(xRandomBall1, yRandomBall1);
+                bounceBall2.moveBall(xRandomBall2, yRandomBall2);
+                bounceBall1.drawBall();
+                bounceBall2.drawBall();
             
                 //If we are allowed an extra life we set and draw the extra life dot dot/check for collisions on it
                 if(gotLife == true)
@@ -192,13 +190,13 @@
                openCloseMouth2 = mouthPositions[1];  
                
                //if pacman hasnt been caught by the dot we just draw him as normal
-               if(caught1 == false)
+               if(caught1 == false && caught2 == false)
                {
                     //Pacman only goes right while X is less than border X, function defined in BorderCollisionsPacman.js
                     //the function detects collisions between pacman and canvas border & draws pacman
                     leftRight = rightBorderCollision(leftRight, upAndDownbody, radius, canvas.width, openCloseMouth1, openCloseMouth2, ctx,                                                     "yellow");
                }
-               else if(caught1 == true)//but if he has been caught by the dot
+               else if(caught1 == true || caught2 == true)//but if he has been caught by the dot
                {
                    //increment counter and perform modulus % 2 operation to get either 0 or 1
                    stillHitCnt += 1;
@@ -225,18 +223,25 @@
                    dot.moveDot(xRandomDot, yRandomDot);
                    
                    //Check if ball speed has hit its maximum and if so
-                if(ballSpeedX1 >= ballMaxSpeed || ballSpeedX1 <= -ballMaxSpeed || ballSpeedY1 >= ballMaxSpeed || ballSpeedY1 <= -ballMaxSpeed)
+                   if(ballSpeedX1 >= ballMaxSpeed || ballSpeedX1 <= -ballMaxSpeed || ballSpeedY1 >= ballMaxSpeed || ballSpeedY1 <= -                                    ballMaxSpeed)
                    {
                        //dont do anything, speed remains unchanged
-                       ballSpeedX1 = ballSpeedX;
-                       ballSpeedY1 = ballSpeedY;
+                       ballSpeedX1 = ballSpeedX1;
+                       ballSpeedY1 = ballSpeedY1;
+                       ballSpeedX2 = ballSpeedX2;
+                       ballSpeedY2 = ballSpeedY2;
                    }
-                   else
+                   else//otherwise
                    {
-                       //Otherwise increase the speed of the ball (defined in GameplayFunctions.js)
+                       //increase the speed of the ball1 (defined in GameplayFunctions.js)
                        speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);//defined above
                        ballSpeedX1 = speeds1[0];
                        ballSpeedY1 = speeds1[1];
+                       
+                       //increase the speed of the ball2 (defined in GameplayFunctions.js)
+                       speeds2 = increaseBallSpeed(ballSpeedX2, ballSpeedY2);//defined above
+                       ballSpeedX2 = speeds2[0];
+                       ballSpeedY2 = speeds2[1];
                    }
                    
                    scoreCnt += scoreIncrease; //Increment the score by amount of score increase
@@ -250,14 +255,18 @@
                    
                }
                 
-               //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+               //Making sure the balls chasing pacman bounce around the canvas (collision detection for canvas border and bouncing ball)
                //defined in BouncingBall.js
-               directions1 = bounceBall.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
+               directions1 = bounceBall1.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
                ballSpeedX1 = directions1[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
                ballSpeedY1 = directions1[1];
                 
-               //Using bounceBalls intersect function, if pacman collides with the bouncing ball. (defined in BouncingBall.js)
-               if(bounceBall.intersect(leftRight, upAndDownbody, radius))
+               directions2 = bounceBall2.makeBallBounce(canvas.width, canvas.height, ballSpeedX2, ballSpeedY2);
+               ballSpeedX2 = directions2[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY2 = directions2[1];
+                
+               //Using bounceBalls intersect function, if pacman collides with the bouncing ball1. (defined in BouncingBall.js)
+               if(bounceBall1.intersect(leftRight, upAndDownbody, radius))
                {
                    //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
                    pacmanInjuredAudio(pacmanHurtAudio);
@@ -273,7 +282,7 @@
                        //(defined in GameplayFunctions.js)
                        pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
                        pacmanAudioOn = pacmanAudioResults[0];
-                       pacmanDeadEndAudio = pacmanAudioResults[1];
+                       pacmanEndAudio = pacmanAudioResults[1];
                        
                        //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
                        pacmanDeadAudio(pacmanDiesAudio);
@@ -292,8 +301,46 @@
                    caught1 = false;
                }
                 
-               xRandomBall += ballSpeedX1;       //increment bouncing balls x/y and changemouth counter
-               yRandomBall += ballSpeedY1 
+               //Using bounceBalls intersect function, if pacman collides with the bouncing ball2. (defined in BouncingBall.js)
+               if(bounceBall2.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught2 == false)
+                   {
+                       pacmanEndAudio = true; //set end audio to true because game is over
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
+                       pacmanDeadAudio(pacmanDiesAudio);
+                       
+                       //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
+                       outputGameOverPopup(scoreCnt);
+                   }
+                   else if(caught2 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught2 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
+                   caught2 = false;
+               }
+                
+               xRandomBall1 += ballSpeedX1;       //increment bouncing balls x/y and changemouth counter
+               yRandomBall1 += ballSpeedY1 
+               xRandomBall2 += ballSpeedX2;       
+               yRandomBall2 += ballSpeedY2 
                changeMouth += 1;
             
             //request animation frame for this function and pass the animation id to var stopRight
@@ -313,19 +360,14 @@
                 //output the score and lives of user (defined in GameplayFunctions.js)
                 outputUserInfo(ctx, scoreCnt, lives);
             
-                //If the score is >= 1700 then we call a function which moves player to level two (defined in GameplayFunctions.js)
-                if(scoreCnt >= 1700)
-                {
-                    moveToLevelTwo(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
-                    play = false;
-                }
-                
                 dot.drawDot();//Draw random dot (defined in Dot.js)
                  
-                //Move x/y of bouncing ball and then draw it (Defined in BouncingBall.js)
-                bounceBall.moveBall(xRandomBall, yRandomBall);
-                bounceBall.drawBall();
-   
+                //Move x/y of bouncing balls and then draw them (Defined in BouncingBall.js)
+                bounceBall1.moveBall(xRandomBall1, yRandomBall1);
+                bounceBall2.moveBall(xRandomBall2, yRandomBall2);
+                bounceBall1.drawBall();
+                bounceBall2.drawBall();
+                
                 //If we are allowed an extra life we set and draw the extra life dot dot/check for collisions on it
                 if(gotLife == true)
                 {
@@ -364,12 +406,12 @@
                 openCloseMouth4 = mouthPositions[1];  
                 
                 //if pacman hasnt been caught we just draw him as normal
-                if(caught1 == false)
+                if(caught1 == false && caught2 == false)
                 {
                     //Pacman only goes left while X is greater than border X, function defined in BorderCollisionsPacman.js 
                     leftRight = leftBorderCollision(leftRight, upAndDownbody, radius, canvas.width, openCloseMouth3, openCloseMouth4, ctx,                                                          "yellow");
                 }
-                else if(caught1 == true)//but if he has been caught
+                else if(caught1 == true || caught2 == true)//but if he has been caught
                 {
                     //following two lines will increment counter and perform % 2 on it to return either 0 or 1
                    stillHitCnt += 1;
@@ -396,21 +438,27 @@
                    yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
                    dot.moveDot(xRandomDot, yRandomDot);
                    
-                   //Check if ball speed has hit its maximum and if so    
-                if(ballSpeedX1 == ballMaxSpeed || ballSpeedX1 == -ballMaxSpeed || ballSpeedY1 == ballMaxSpeed || ballSpeedY1 == -ballMaxSpeed)
+                   //Check if ball speed has hit its maximum and if so
+                   if(ballSpeedX1 >= ballMaxSpeed || ballSpeedX1 <= -ballMaxSpeed || ballSpeedY1 >= ballMaxSpeed || ballSpeedY1 <= -                                    ballMaxSpeed)
                    {
                        //dont do anything, speed remains unchanged
                        ballSpeedX1 = ballSpeedX1;
                        ballSpeedY1 = ballSpeedY1;
+                       ballSpeedX2 = ballSpeedX2;
+                       ballSpeedY2 = ballSpeedY2;
                    }
                    else
                    {
-                       //Otherwise increase the speed of the ball (defined in GameplayFunctions.js)
-                       speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);
+                       //increase the speed of ball1 (defined in GameplayFunctions.js)
+                       speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);//defined above
                        ballSpeedX1 = speeds1[0];
                        ballSpeedY1 = speeds1[1];
+                       
+                       //increase the speed of ball2 (defined in GameplayFunctions.js)
+                       speeds2 = increaseBallSpeed(ballSpeedX2, ballSpeedY2);//defined above
+                       ballSpeedX2 = speeds2[0];
+                       ballSpeedY2 = speeds2[1];
                    }
-            
                    scoreCnt += scoreIncrease; //Increment the score by amount of score increase
                    scoreIncrease += 2; //increase score increase
                     
@@ -421,52 +469,93 @@
                    }
                 }
                 
-                //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
-                //defined in BouncingBall.js
-                directions1 = bounceBall.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
-                ballSpeedX1 = directions1[0];
-                ballSpeedY1 = directions1[1];
+               //Making sure the balls chasing pacman bounce around the canvas (collision detection for canvas border and bouncing ball)
+               //defined in BouncingBall.js
+               directions1 = bounceBall1.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
+               ballSpeedX1 = directions1[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY1 = directions1[1];
                 
-                //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
-                //this function will keep calling while they are intersected.
-                //(defined in BouncingBall.js)
-                if(bounceBall.intersect(leftRight, upAndDownbody, radius))
-                {
-                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio (defined in GameplayFunctions.js)
-                    pacmanInjuredAudio(pacmanHurtAudio);
-                    
-                    //Makes sure that when pacman is hit, he is only hit once
-                    //only if his lives are 0 and he hasnt been caught previously
-                    if(lives == 0 && caught1 == false)
-                    {
+               directions2 = bounceBall2.makeBallBounce(canvas.width, canvas.height, ballSpeedX2, ballSpeedY2);
+               ballSpeedX2 = directions2[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY2 = directions2[1];
+                
+                //Using bounceBalls intersect function, if pacman collides with the bouncing ball1. (defined in BouncingBall.js)
+               if(bounceBall1.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught1 == false)
+                   {
                        pacmanEndAudio = true; //set end audio to true because game is over
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
-                        
-                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true    
+                       
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
                        pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
                        pacmanAudioOn = pacmanAudioResults[0];
-                       pacmanDeadEndAudio = pacmanAudioResults[1];
-                        
+                       pacmanEndAudio = pacmanAudioResults[1];
+                       
                        //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
                        pacmanDeadAudio(pacmanDiesAudio);
                        
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
                        outputGameOverPopup(scoreCnt);
-                    }
-                    else if(caught1 == false)//else if he is caught but still has lifes
-                    {
-                        lives -= 1;    //take away life
-                        caught1 = true; //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
-                    }          
-                }
-                else //only when pacman/ball have both seperated that caught is set back to false
-                {
+                   }
+                   else if(caught1 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught1 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
                    caught1 = false;
-                }
-            
-                xRandomBall += ballSpeedX1;        //increment bouncing balls x/y and changemouth counter
-                yRandomBall += ballSpeedY1; 
-                changeMouth += 1;
+               }
+                
+               //Using bounceBalls intersect function, if pacman collides with the bouncing ball2. (defined in BouncingBall.js)
+               if(bounceBall2.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught2 == false)
+                   {
+                       pacmanEndAudio = true; //set end audio to true because game is over
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
+                       pacmanDeadAudio(pacmanDiesAudio);
+                       
+                       //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
+                       outputGameOverPopup(scoreCnt);
+                   }
+                   else if(caught2 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught2 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
+                   caught2 = false;
+               }
+                
+               xRandomBall1 += ballSpeedX1;       //increment bouncing balls x/y and changemouth counter
+               yRandomBall1 += ballSpeedY1 
+               xRandomBall2 += ballSpeedX2;       
+               yRandomBall2 += ballSpeedY2 
+               changeMouth += 1;
             
             //request animation frame for this function and pass the animation id to var stopLeft
             stopLeft = window.requestAnimationFrame(pacmanGoLeft);
@@ -484,18 +573,13 @@
            
                 outputUserInfo(ctx, scoreCnt, lives); //(defined in GameplayFunctions.js)
            
-                //If the score is >= 1700 then we call a function which moves player to level two (defined in GameplayFunctions.js)
-                if(scoreCnt >= 1700)
-                {
-                    moveToLevelTwo(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
-                    play = false;
-                }
-               
                 dot.drawDot();//Draw random dot (Defined in Dot.js)
                 
-                //Move x/y of bouncing ball and then draw it (Defined in BouncingBall.js)
-                bounceBall.moveBall(xRandomBall, yRandomBall);
-                bounceBall.drawBall();
+                //Move x/y of bouncing balls and then draw them (Defined in BouncingBall.js)
+                bounceBall1.moveBall(xRandomBall1, yRandomBall1);
+                bounceBall2.moveBall(xRandomBall2, yRandomBall2);
+                bounceBall1.drawBall();
+                bounceBall2.drawBall();
            
                 //If we are allowed an extra life
                 if(gotLife == true)
@@ -535,12 +619,12 @@
                 openCloseMouth6 = mouthPositions[1];  
                 
                 //if pacman hasnt been caught we just draw him as normal
-                if(caught1 == false)
+                if(caught1 == false && caught2 == false)
                 {
                     //Pacman only goes up while Y is greater than border Y, function defined in BorderCollisionsPacman.js
                     upAndDownbody = upBorderCollision(leftRight, upAndDownbody, radius, canvas.height, openCloseMouth5, openCloseMouth6, ctx,                                                      "yellow");
                 }
-                else if(caught1 == true)//but if he has been caught
+                else if(caught1 == true || caught2 == true)//but if he has been caught
                 {
                     //following two lines will increment counter and perform % 2 on it to return either 0 or 1
                    stillHitCnt += 1;
@@ -568,19 +652,26 @@
                    yRandomDot = Math.floor((Math.random() * (canvas.height - (dotRadius * 2)))) + dotRadius; 
                    dot.moveDot(xRandomDot, yRandomDot);
                 
-                   //Check if ball speed has hit its maximum and if so    
-                if(ballSpeedX1 == ballMaxSpeed || ballSpeedX1 == -ballMaxSpeed || ballSpeedY1 == ballMaxSpeed || ballSpeedY1 == -ballMaxSpeed)
+                   //Check if ball speed has hit its maximum and if so
+                   if(ballSpeedX1 >= ballMaxSpeed || ballSpeedX1 <= -ballMaxSpeed || ballSpeedY1 >= ballMaxSpeed || ballSpeedY1 <= -                                    ballMaxSpeed)
                    {
                        //dont do anything, speed remains unchanged
                        ballSpeedX1 = ballSpeedX1;
                        ballSpeedY1 = ballSpeedY1;
+                       ballSpeedX2 = ballSpeedX2;
+                       ballSpeedY2 = ballSpeedY2;
                    }
                    else
                    {
-                       //Otherwise increase the speed of the ball (defined in GameplayFunctions.js)
-                       speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);
+                       //Increase the speed of ball1 (defined in GameplayFunctions.js)
+                       speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);//defined above
                        ballSpeedX1 = speeds1[0];
                        ballSpeedY1 = speeds1[1];
+                       
+                       //increase the speed of ball2 (defined in GameplayFunctions.js)
+                       speeds2 = increaseBallSpeed(ballSpeedX2, ballSpeedY2);//defined above
+                       ballSpeedX2 = speeds2[0];
+                       ballSpeedY2 = speeds2[1];
                    }
                     
                    scoreCnt += scoreIncrease; //Increment the score by amount of score increase
@@ -594,50 +685,94 @@
                     
                 }
                
-                //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
-                //defined in BouncingBall.js
-                directions1 = bounceBall.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
-                ballSpeedX1 = directions1[0];
-                ballSpeedY1 = directions1[1];
+                ///Making sure the balls chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+               //defined in BouncingBall.js
+               directions1 = bounceBall1.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
+               ballSpeedX1 = directions1[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY1 = directions1[1];
                 
-                //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
-                //(Defined in BouncingBall.js)
-                if(bounceBall.intersect(leftRight, upAndDownbody, radius))
-                {
-                    //Play pacman hurt audio which is done by the fucntion here, pass in the audio (defined in GameplayFunctions.js)
-                    pacmanInjuredAudio(pacmanHurtAudio);
-                    
-                    if(lives == 0 && caught1 == false)
-                    {
+               directions2 = bounceBall2.makeBallBounce(canvas.width, canvas.height, ballSpeedX2, ballSpeedY2);
+               ballSpeedX2 = directions2[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY2 = directions2[1];
+                
+                
+                 //Using bounceBalls intersect function, if pacman collides with the bouncing ball1. (defined in BouncingBall.js)
+               if(bounceBall1.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught1 == false)
+                   {
                        pacmanEndAudio = true; //set end audio to true because game is over
                        play = false;//we are dead so set play to false. Stops frames running in background behind the popup
                        
-                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
                        //(defined in GameplayFunctions.js)
                        pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
                        pacmanAudioOn = pacmanAudioResults[0];
-                       pacmanDeadEndAudio = pacmanAudioResults[1];
+                       pacmanEndAudio = pacmanAudioResults[1];
                        
                        //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
-                       pacmanDeadAudio(pacmanDiesAudio);    
-                        
+                       pacmanDeadAudio(pacmanDiesAudio);
+                       
                        //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
-                       outputGameOverPopup(scoreCnt);                                 
-                    }
-                    else if(caught1 == false)
-                    {
-                        lives -= 1;       //take life away
-                        caught1 = true;    //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
-                    }   
-                }
-                else//only when pacman/ball have both seperated that caught is set back to false
-                { 
-                    caught1 = false;
-                }
-            
-                xRandomBall += ballSpeedX1;            //increment bouncing balls x/y and changemouth counter
-                yRandomBall += ballSpeedY1;
-                changeMouth += 1;
+                       outputGameOverPopup(scoreCnt);
+                   }
+                   else if(caught1 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught1 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
+                   caught1 = false;
+               }
+                
+               //Using bounceBalls intersect function, if pacman collides with the bouncing ball2. (defined in BouncingBall.js)
+               if(bounceBall2.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught2 == false)
+                   {
+                       pacmanEndAudio = true; //set end audio to true because game is over
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
+                       pacmanDeadAudio(pacmanDiesAudio);
+                       
+                       //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
+                       outputGameOverPopup(scoreCnt);
+                   }
+                   else if(caught2 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught2 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
+                   caught2 = false;
+               }
+                
+               xRandomBall1 += ballSpeedX1;       //increment bouncing balls x/y and changemouth counter
+               yRandomBall1 += ballSpeedY1 
+               xRandomBall2 += ballSpeedX2;       
+               yRandomBall2 += ballSpeedY2 
+               changeMouth += 1;
            
            //request animation frame for this function and pass the animation id to var stopUp
            stopUp = window.requestAnimationFrame(pacmanGoUp);
@@ -656,18 +791,13 @@
             //Output score and lives (Defined in GameplayFunctions.js)
             outputUserInfo(ctx, scoreCnt, lives);
         
-            //If the score is >= 1700 then we call a function which moves player to level two (defined in GameplayFunctions.js)
-            if(scoreCnt >= 1700)
-            {
-                moveToLevelTwo(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
-                play = false;
-            }
-            
             dot.drawDot();//Draw random dot (Defined in Dot.js)
             
-            //Move x/y of bouncing ball and then draw it (Defined in BouncingBall.js)
-            bounceBall.moveBall(xRandomBall, yRandomBall);
-            bounceBall.drawBall();
+            //Move x/y of bouncing balls and then draw them (Defined in BouncingBall.js)
+            bounceBall1.moveBall(xRandomBall1, yRandomBall1);
+            bounceBall2.moveBall(xRandomBall2, yRandomBall2);
+            bounceBall1.drawBall();
+            bounceBall2.drawBall();
         
             //If we are allowed an extra life
             if(gotLife == true)
@@ -706,12 +836,12 @@
             openCloseMouth8 = mouthPositions[1]; 
             
             //if pacman hasnt been caught just draw him as normal
-            if(caught1 == false)
+            if(caught1 == false && caught2 == false)
             {
                 //Pacman only goes down while Y is less than border Y, function defined in BorderCollisionsPacman.js
                 upAndDownbody = downBorderCollision(leftRight, upAndDownbody, radius, canvas.height, openCloseMouth7, openCloseMouth8, ctx,                                                        "yellow"); 
             }
-            else if(caught1 == true)//but if he has been caught
+            else if(caught1 == true || caught2 == true)//but if he has been caught
             {
                 //increment counter and perform modulus operation to get either 0 or 1
                 stillHitCnt += 1;
@@ -740,19 +870,26 @@
                 dot.moveDot(xRandomDot, yRandomDot);
                 
                 //Check if ball speed has hit its maximum and if so
-                if(ballSpeedX1 == ballMaxSpeed || ballSpeedX1 == -ballMaxSpeed || ballSpeedY1 == ballMaxSpeed || ballSpeedY1 == -ballMaxSpeed)
-                {
-                    //dont do anything, speed remains unchanged
-                    ballSpeedX1 = ballSpeedX1;
-                    ballSpeedY1 = ballSpeedY1;
-                }
-                else
-                {
-                    //Otherwise increase the speed of the ball (defined in GameplayFunctions.js)
-                    speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);
-                    ballSpeedX1 = speeds1[0];
-                    ballSpeedY1 = speeds1[1];
-                }
+                   if(ballSpeedX1 >= ballMaxSpeed || ballSpeedX1 <= -ballMaxSpeed || ballSpeedY1 >= ballMaxSpeed || ballSpeedY1 <= -                                    ballMaxSpeed)
+                   {
+                       //dont do anything, speed remains unchanged
+                       ballSpeedX1 = ballSpeedX1;
+                       ballSpeedY1 = ballSpeedY1;
+                       ballSpeedX2 = ballSpeedX2;
+                       ballSpeedY2 = ballSpeedY2;
+                   }
+                   else
+                   {
+                       //increase the speed of ball1 (defined in GameplayFunctions.js)
+                       speeds1 = increaseBallSpeed(ballSpeedX1, ballSpeedY1);//defined above
+                       ballSpeedX1 = speeds1[0];
+                       ballSpeedY1 = speeds1[1];
+                       
+                       //increase the speed of the ball2 (defined in GameplayFunctions.js)
+                       speeds2 = increaseBallSpeed(ballSpeedX2, ballSpeedY2);//defined above
+                       ballSpeedX2 = speeds2[0];
+                       ballSpeedY2 = speeds2[1];
+                   }
             
                 scoreCnt += scoreIncrease; //Increment the score by amount of score increase
                 scoreIncrease += 2; //increase score increase
@@ -764,50 +901,94 @@
                 }
             }
             
-            //Making sure the ball chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
-            //defined in BouncingBall.js
-            directions1 = bounceBall.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
-            ballSpeedX1 = directions1[0];
-            ballSpeedY1 = directions1[1];
+               //Making sure the balls chasing pacman bounces around the canvas (collision detection for canvas border and bouncing ball)
+               //defined in BouncingBall.js
+               directions1 = bounceBall1.makeBallBounce(canvas.width, canvas.height, ballSpeedX1, ballSpeedY1);
+               ballSpeedX1 = directions1[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY1 = directions1[1];
+                
+               directions2 = bounceBall2.makeBallBounce(canvas.width, canvas.height, ballSpeedX2, ballSpeedY2);
+               ballSpeedX2 = directions2[0];  //ballSpeedX and ballSpeedY are added to X,Y for the ball at the bottom of this function
+               ballSpeedY2 = directions2[1];
             
-            //Using bounceBalls intersect function, if pacman collides with the bouncing ball.
-            //(Defined in BouncingBall.js)
-            if(bounceBall.intersect(leftRight, upAndDownbody, radius))
-            {
-                //Play pacman hurt audio which is done by the fucntion here, pass in the audio (defined in GameplayFunctions.js)
-                pacmanInjuredAudio(pacmanHurtAudio);
-                
-                if(lives == 0 && caught1 == false)
-                {
-                   pacmanEndAudio = true; //set end audio to true because game is over
-                   play = false; //we are dead so set play to false. Stops frames running in background behind the popup
-                
-                   //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true
-                   //(defined in GameplayFunctions.js)
-                   pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
-                   pacmanAudioOn = pacmanAudioResults[0];
-                   pacmanDeadEndAudio = pacmanAudioResults[1];
-                    
-                   //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
-                   pacmanDeadAudio(pacmanDiesAudio);
+              //Using bounceBalls intersect function, if pacman collides with the bouncing ball1. (defined in BouncingBall.js)
+               if(bounceBall1.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught1 == false)
+                   {
+                       pacmanEndAudio = true; //set end audio to true because game is over
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
                        
-                   //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
-                   outputGameOverPopup(scoreCnt);
-                }
-                else if(caught1 == false)//if pacman has lives but has been caught
-                {
-                    lives -= 1;     //take life away
-                    caught1 = true;  //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
-                }   
-            }
-            else//only when pacman/ball have both seperated that caught is set back to false
-            {
-                caught1 = false;
-            }
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
+                       pacmanDeadAudio(pacmanDiesAudio);
+                       
+                       //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
+                       outputGameOverPopup(scoreCnt);
+                   }
+                   else if(caught1 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught1 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
+                   caught1 = false;
+               }
+                
+               //Using bounceBalls intersect function, if pacman collides with the bouncing ball2. (defined in BouncingBall.js)
+               if(bounceBall2.intersect(leftRight, upAndDownbody, radius))
+               {
+                   //Play pacman hurt audio which is done by the function here, pass in the audio (defined in GameplayFunctions.js)
+                   pacmanInjuredAudio(pacmanHurtAudio);
+                   
+                   //Makes sure that when pacman is hit, he is only hit once
+                   //only if his lives are 0 and he hasnt been caught previously
+                   if(lives == 0 && caught2 == false)
+                   {
+                       pacmanEndAudio = true; //set end audio to true because game is over
+                       play = false;//we are dead so set play to false. Stops frames running in background behind the popup
+                       
+                       //call the startGameplayAudio() function to switch off audio. pacmanDeadEndAudio = true 
+                       //(defined in GameplayFunctions.js)
+                       pacmanAudioResults = startGameplayAudio(pacmanAudioOn, pacmanEndAudio, pacmanAudio);
+                       pacmanAudioOn = pacmanAudioResults[0];
+                       pacmanEndAudio = pacmanAudioResults[1];
+                       
+                       //call pacmanDeadAudio() and pass the audio to the function where it will be played (defined in GameplayFunctions.js)
+                       pacmanDeadAudio(pacmanDiesAudio);
+                       
+                       //Alert you have died, give the score also, uses jQuery plugin for custom confirm box (defined in Gameplayfunctions.js)
+                       outputGameOverPopup(scoreCnt);
+                   }
+                   else if(caught2 == false)//else if he still has lives and hasnt been already hit
+                   {
+                        lives -= 1;        //take lives away
+                        caught2 = true;     //caught = true. Wont keep losing lives while their pixels intersect.(allows ball to pass through)
+                   }
+               }
+               else//otherwise he hasnt been hit so its false
+               { 
+                   caught2 = false;
+               }
             
-            xRandomBall += ballSpeedX1;                          //increment bouncing balls x/y and changemouth counter
-            yRandomBall += ballSpeedY1;  
-            changeMouth += 1;
+             
+               xRandomBall1 += ballSpeedX1;       //increment bouncing balls x/y and changemouth counter
+               yRandomBall1 += ballSpeedY1 
+               xRandomBall2 += ballSpeedX2;      
+               yRandomBall2 += ballSpeedY2 
+               changeMouth += 1;
         
         //request animation frame for this function and pass the animation id to var stopDown
         stopDown = window.requestAnimationFrame(pacmanGoDown);

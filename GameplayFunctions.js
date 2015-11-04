@@ -10,24 +10,24 @@ function outputUserInfo(ctx, score, lives)
 }
 
 //This function controls the audio (waka waka) for pacman which will play for an hour. Starts playing if it hasnt already been started. If it //has been started and pacman isnt dead then dont do anything, and if its been started and pacman is dead then stop it.
-function startGameplayAudio(audioOn, pacmanDead, audio)
+function startGameplayAudio(audioOn, pacmanDeadOrWin, audio)
 {
-    if(audioOn == false && pacmanDead == false)
+    if(audioOn == false && pacmanDeadOrWin == false)
     {
         audio.volume = 0.25;
         audio.play();                           //play audio
         audioOn = true;                         //audio is playing so set audioOn to true
-        return [audioOn, pacmanDead];
+        return [audioOn, pacmanDeadOrWin];
     }
-    else if(audioOn == true && pacmanDead == false)
+    else if(audioOn == true && pacmanDeadOrWin == false)
     {
-        return [audioOn, pacmanDead];
+        return [audioOn, pacmanDeadOrWin];
     }
-    else if(pacmanDead == true && audioOn == true)
+    else if(pacmanDeadOrWin == true && audioOn == true)
     {
         audio.pause();
         audio.currentTime = 0;
-        return [audioOn, pacmanDead];
+        return [audioOn, pacmanDeadOrWin];
     }
 }
 
@@ -125,6 +125,25 @@ function outputGameOverPopup(score)
             window.location = "Home.html";//go back to home
         }
     });
+}
+
+//Allows player to proceed to level two. Pauses the game audio, plays a winning audio and gives a popup option
+function moveToLevelTwo(audioGame, audioCongrats, score)
+{
+    audioGame.pause();
+    audioCongrats.volume = 1.0;
+    audioCongrats.play();
+                    
+    jConfirm('You have reached level 2!\n Score is ' +score+ '\nPlay level 2 or cancel?(Back to Home)', 'CONGRATULATIONS!',                             function(r){
+            if(r)//If we click ok (play again)
+            {
+                window.location = "Index2.html"//reload the page
+            }
+            else//otherwise
+            {
+                window.location = "Home.html";//go back to home
+            }
+        });
 }
 
 //Set the counter to change pacmans mouth back to zero if it is 7
