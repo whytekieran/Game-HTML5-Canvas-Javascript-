@@ -5,7 +5,7 @@
 **Module:** Graphic Programming </br>
 
 **----------------------------------------------------------------------------------------------------------------------------**<br/>
-**IMPORTANT:** This game has been primarily tested on Google Chrome and therefore i would recommend it as your browser of choice to run the game. This game also contains Javascript classes, a fairly new concept to javascript and yet to be fully standardized. Therefore some older browsers may not run it yet, again i recommend a recent version of Google Chrome. The audio files being used were downloaded to. The game has two levels, and you proceed to level two if you score >= 1700. Finally this game uses some custom styled popup boxes. To do this i included some plugin code that is availible from JQuery. This code is contained in the file JQuery-Alert-Dialogs.</br>
+**IMPORTANT:** This game has been primarily tested on Google Chrome and therefore i would recommend it as your browser of choice to run the game. This game also contains Javascript classes, a fairly new concept to javascript and yet to be fully standardized. Therefore some older browsers may not run it yet, again i recommend a recent version of Google Chrome. The audio files being used were downloaded to. The game has two levels, and you proceed to level two if you score >= 1700. Finally this game uses some custom styled popup boxes. To do this i included some plugin code that is available from JQuery. This code is contained in the file JQuery-Alert-Dialogs.</br>
 **----------------------------------------------------------------------------------------------------------------------------**
 
 ## A Brief Introduction
