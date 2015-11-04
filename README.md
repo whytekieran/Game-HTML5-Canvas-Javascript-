@@ -16,7 +16,7 @@ a yellow dot appears which grants an extra life. You control pacman using the di
 
 ## Main Components
 
-This game is composed of eight files. Two HTML files, five Javascript files and a CSS file. Here each will be explained. Here are the files:
+This game is composed of ten files. Three HTML files, six Javascript files and a CSS file. Here each will be explained. Here are the files:
 
 * Home.html
 * Game.css
