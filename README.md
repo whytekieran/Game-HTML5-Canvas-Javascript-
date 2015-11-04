@@ -27,7 +27,7 @@ This game is composed of eight files. Two HTML files, five Javascript files and 
 * BorderCollisionsPacman.js
 * MoveMouthPacman.js
 
-_**Home.html**_ is the homepage allowing you to enter or exit. It contains a header, canvas and table with one row and two columns holding the buttons. Home.html also uses Game.css, BouncingBall.js, Dot.js and GameplayFunctions.js as external files. These are explained further down.
+_**Home.html**_ is the homepage allowing you to enter or exit. It contains a header, canvas and table with one row and two columns holding the buttons. Home.html also uses Game.css, BouncingBall.js, Dot.js and GameplayFunctions.js as external files. These are explained further down. The homepage also plays some audio which is done by a function defined in GameplayFunctions.js
 
 _**Game.css**_ is simple file providing CSS styling for Home.html, background, borders, button styling etc
 
@@ -45,7 +45,7 @@ _**Index.html**_ is the main page and its where the game is played. It uses all 
 
 Each of these functions runs an animation frame and the one thats run depends on which arrow key we press and is handled by the whichbutton() method. If there is a new button push the current running animation frame is cancelled and the next is run from that point. 
 
-_**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popus boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background and various functions responsible for the audio of the game.
+_**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popup boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background, resetting the counter responsible for changing pacmans mouth and various functions responsible for the audio of the game.
 
 _**Dot.js**_ is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
 
