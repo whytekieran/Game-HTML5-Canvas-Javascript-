@@ -52,11 +52,11 @@ _**Index2.html**_ This is where level two of the game is run its very similar to
 
 _**GlobalVariables.js**_ A javascript file that contains all the variables shared by Index1.html and Index2.html. There are additional variables needed in the second level that arent needed in the first. All of these variables are in this file.
 
-_**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popup boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background, resetting the counter responsible for changing pacmans mouth, moving to the next level and various functions responsible for the audio of the game.
+_**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popup boxes for start, game over and progression to level two, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background, resetting the counter responsible for changing pacmans mouth position, moving to the next level and various functions responsible for the audio of the game.
 
 _**Dot.js**_ Is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
 
-_**BouncingBall.js**_ Is a javascript class created to handle the bouncing ball for the game. The game pacman chases.
+_**BouncingBall.js**_ Is a javascript class created to handle the bouncing ball for the game. The ball pacman must avoid.
 
 _**BorderCollisionsPacman.js**_ Defines the functions needed for detecting if pacman has reached the end of the canvas depending on his current direction. These functions also are responsible for drawing pacman on the canvas.
 
