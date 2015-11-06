@@ -20,7 +20,7 @@ This game is composed of ten files. Three HTML files, six Javascript files and a
 
 * Home.html
 * Game.css
-* Index1.html
+* Index.html
 * Index2.html
 * GlobalVariables.js
 * GameplayFunctions.js
@@ -33,7 +33,7 @@ _**Home.html**_ is the homepage allowing you to enter or exit. It contains a hea
 
 _**Game.css**_ is simple file providing CSS styling for Home.html, background, borders, button styling etc
 
-_**Index1.html**_ is the main page and its where level one of the game is played. It uses all .js files as external files. The HTML is simple, only including a canvas. The javascript structured as follows: </br>
+_**Index.html**_ is the main page and its where level one of the game is played. It uses all .js files as external files. The HTML is simple, only including a canvas. The javascript structured as follows: </br>
 * At the top we have the external javascript files and global variables, most of the global variables are however are coming from GlobalVariables.js. We then create some dot objects for pacman to chase and ball object for him to avoid.
 * There is then a do while which sets x and y coordinates for the ball object chasing pacman.
 * Then we then call two functions, one outputs the players lives and score to the screen. The other is then a popup box which shows the start instuctions.
