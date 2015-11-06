@@ -146,6 +146,29 @@ function moveToLevelTwo(audioGame, audioCongrats, score)
         });
 }
 
+function youWin(audioGame, audioCongrats, score)
+{
+    audioGame.pause();
+    audioCongrats.volume = 1.0;
+    audioCongrats.play();
+                    
+    jConfirm('Your the king pacman ball avoiding thing :P '+
+             '\nYOU WIN!!'+
+             '\nDo you wish to play again or cancel?(Back to Home)', 
+             'YAYYYYY!!!',                                  
+             function(r) 
+             {
+                if(r)//If we click ok (play again)
+             {
+                location.reload();//reload the page
+             }
+                else//otherwise
+             {
+                window.location = "Home.html";//go back to home
+            }
+      });
+}
+
 //Set the counter to change pacmans mouth back to zero if it is 7
 function resetChangeMouthPositionCounter(changeMouth)
 {

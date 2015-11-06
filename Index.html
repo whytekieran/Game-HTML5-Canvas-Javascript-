@@ -48,8 +48,8 @@
         //The extra dot is for extra lives and ball that chases pacman
         var dot = new Dot(xRandomDot, yRandomDot, dotRadius, ctx, "red");
         var dotExtraLife = new Dot(0, 0, 10, ctx, "yellow");
-        dot.drawDot();                                                     //Calling drawDot class function 
         var bounceBall = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball object to catch pacman class defined in BouncingBall.js
+        dot.drawDot();                                                     //Calling drawDot class function 
         
         //Random x and y at startup for ball chasing pacman keep doing till correct (do/while)
         do

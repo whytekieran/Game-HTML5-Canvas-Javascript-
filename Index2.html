@@ -46,9 +46,9 @@
         //Create and draw the dot object that pacman will chase, class define in Dot.js
         var dot = new Dot(xRandomDot, yRandomDot, dotRadius, ctx, "red");
         var dotExtraLife = new Dot(0, 0, 10, ctx, "yellow");
-        dot.drawDot();  
         var bounceBall1 = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball1 object to catch pacman class defined in BouncingBall.js
         var bounceBall2 = new BouncingBall(0, 0, ballRadius, ctx, "blue");  //Ball2 object to catch pacman class defined in BouncingBall.js
+        dot.drawDot();  
         
         //Random x and y at startup for balls chasing pacman keep doing till correct (do/while)
         //Two balls in this level not one.
@@ -142,6 +142,13 @@
                 
                 //output the score and lives of user (defined in GameplayFunctions.js)
                 outputUserInfo(ctx, scoreCnt, lives);
+                
+                //function to output that you win the game if score is greater that 1500
+                if(scoreCnt >= 1500)
+                {
+                   youWin(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
+                   play = false;
+                }
             
                 dot.drawDot();// Draw/redraw random dot for pacman to chase
                 
@@ -359,6 +366,14 @@
             
                 //output the score and lives of user (defined in GameplayFunctions.js)
                 outputUserInfo(ctx, scoreCnt, lives);
+                
+                //function to output that you win the game if score is greater than 1500
+                if(scoreCnt >= 1500)
+                {
+                    //function youWin defined in GameplayFunctions.js
+                   youWin(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
+                   play = false;
+                }
             
                 dot.drawDot();//Draw random dot (defined in Dot.js)
                  
@@ -572,6 +587,14 @@
                 redrawCanvasBackground(ctx, canvas.height, canvas.width);
            
                 outputUserInfo(ctx, scoreCnt, lives); //(defined in GameplayFunctions.js)
+               
+                //function to output that you win the game if score is greater that 1500
+                if(scoreCnt >= 1500)
+                {
+                    //function youWin defined in GameplayFunctions.js
+                   youWin(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
+                   play = false;
+                }
            
                 dot.drawDot();//Draw random dot (Defined in Dot.js)
                 
@@ -790,6 +813,14 @@
         
             //Output score and lives (Defined in GameplayFunctions.js)
             outputUserInfo(ctx, scoreCnt, lives);
+            
+            //function to output that you win the game if score is greater that 1500
+            if(scoreCnt >= 1500)
+            {
+                //function youWin defined in GameplayFunctions.js
+                youWin(pacmanAudio, pacmanNextLevelAudio, scoreCnt);
+                play = false;
+            }
         
             dot.drawDot();//Draw random dot (Defined in Dot.js)
             
