@@ -54,13 +54,13 @@ _**GlobalVariables.js**_ A javascript file that contains all the variables share
 
 _**GameplayFunctions.js**_ This javascript file defines some general functions used in the game such as, popup boxes for start and game over, increasing the speed of the ball chasing pacman, outputting the user information to the screen, redrawing the canvas background, resetting the counter responsible for changing pacmans mouth, moving to the next level and various functions responsible for the audio of the game.
 
-_**Dot.js**_ is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
+_**Dot.js**_ Is a javascript class created to handle dots in the game. Both the extra life dot and dot pacman chases are defined using the dot class and its functions. eg a function for finding if if intersects with pacman (another circle)
 
-_**BouncingBall.js**_ is a javascript class created to handle the bouncing ball for the game. The game pacman chases.
+_**BouncingBall.js**_ Is a javascript class created to handle the bouncing ball for the game. The game pacman chases.
 
-_**BorderCollisionsPacman.js**_ defines the functions needed for detecting if pacman has reached the end of the canvas depending on his current direction.
+_**BorderCollisionsPacman.js**_ Defines the functions needed for detecting if pacman has reached the end of the canvas depending on his current direction. These functions also are responsible for drawing pacman on the canvas.
 
-_**MouthMovePacman.js**_ defines the functions used for opening/closing pacmans mouth, when it does it and from what angle depending on the direction he is going in.
+_**MouthMovePacman.js**_ Defines the functions used for opening/closing pacmans mouth, when it does it and from what angle depending on the direction he is going in.
 
 **Each of these files has been heavily commented to assist in the readibilty and help quicken anyones understanding in exactly whats happening.**
 
